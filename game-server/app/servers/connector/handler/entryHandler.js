@@ -9,7 +9,7 @@ var Handler = function(app) {
 var handler = Handler.prototype;
 
 /**
- * New client entry play server.
+ * New client entry core server.
  *
  * @param  {Object}   msg     request message
  * @param  {Object}   session current session object
@@ -41,7 +41,7 @@ handler.enter = function(msg, session, next) {
 	session.on('closed', onUserLeave.bind(null, self.app));
 
 	//put user into channel
-	self.app.rpc.play.playRemote.add(session, uid, self.app.get('serverId'), rid, true, function(users){
+	self.app.rpc.core.coreRemote.add(session, uid, self.app.get('serverId'), rid, true, function(users){
 		next(null, {
 			users:users
 		});
@@ -61,12 +61,42 @@ handler.createRoom = function(msg, session, next) {
     console.log("now in entryHandler.createRoom!!!");
 
     //create room
-    self.app.rpc.play.playRemote.createRoom.toServer('play-server-1', function(rid){
+    self.app.rpc.core.coreRemote.createRoom.toServer('core-server-1', function(rid){
     	console.log("handler creating room.");
         next(null, {
             rid:rid
         });
     });
+};
+
+/**
+ * 进入房间。
+ * 传入 uid 和 rid
+ *
+ * @param msg
+ * @param session
+ * @param next
+ */
+handler.enterRoom = function(msg, session, next) {
+	msg.serverId = this.app.get('serverId');
+
+	// put player into room
+	this.app.rpc.game.gameRemote.enterRoom(session, msg, function(data) {
+		if(!!data.roomId && data.roomId > 0) {
+			session.set('roomId', data.roomId);
+		}
+
+		session.push('roomId', function(err) {
+			if(err) {
+				console.error('Set roomId for session service failed! error is : %j', err.stack);
+			} else {
+				next(null, {
+					roomId: data.roomId,
+					seatNum: data.seatNum
+				});
+			}
+		});
+	});
 };
 
 /**

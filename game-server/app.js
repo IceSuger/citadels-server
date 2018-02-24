@@ -1,11 +1,13 @@
 var pomelo = require('pomelo');
 var routeUtil = require('./app/util/routeUtil');
+var RoomService = require('./app/services/roomService');
 /**
  * Init app for client.
  */
 var app = pomelo.createApp();
 app.set('name', 'citadels');
 app.set('curMaxRoomId', 1);
+app.set('roomService', new RoomService());
 
 // app configuration
 app.configure('production|development', 'connector', function(){
@@ -29,7 +31,7 @@ app.configure('production|development', 'gate', function(){
 // app configure
 app.configure('production|development', function() {
 	// route configures
-	app.route('play', routeUtil.play);
+	app.route('core', routeUtil.core);
 
 	// filter configures
 	app.filter(pomelo.timeout());

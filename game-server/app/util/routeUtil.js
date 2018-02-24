@@ -1,15 +1,15 @@
 var exp = module.exports;
 var dispatcher = require('./dispatcher');
 
-exp.play = function(session, msg, app, cb) {
-	var playServers = app.getServersByType('play');
+exp.core = function(session, msg, app, cb) {
+	var coreServers = app.getServersByType('core');
 
-	if(!playServers || playServers.length === 0) {
-		cb(new Error('can not find play servers.'));
+	if(!coreServers || coreServers.length === 0) {
+		cb(new Error('can not find core servers.'));
 		return;
 	}
 
-	var res = dispatcher.dispatch(session.get('rid'), playServers);
+	var res = dispatcher.dispatch(session.get('rid'), coreServers);
 
 	cb(null, res.id);
 };
