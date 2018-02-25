@@ -3,15 +3,16 @@
  */
 var StateMachine = require('javascript-state-machine');
 var consts = require('../consts/consts');
+var RoleSet = require('./roleSet');
 
 var Game = function(room) {
     this.curPlayer = 0;
     this.totalPlayer = room.totalPlayer;
-    // channel ÕâÁ©¶ÔÏóÓÃÀ´Ïò¿Í»§¶Ë·¢ÏûÏ¢
+    // channel è¿™ä¿©å¯¹è±¡ç”¨æ¥å‘å®¢æˆ·ç«¯å‘æ¶ˆæ¯
     this.channelService = room.channelService;
     this.channel = room.channel;
     this.playerDict = {};
-    this.roleSet = null;
+    this.roleSet = new RoleSet();
     this.pickableRoles = [];
     this.crownOwner = 0;
     this.gameOver = false;
@@ -40,15 +41,15 @@ var game = Game.prototype;
 
 game.init = function(){
     /**
-     *  1. ³õÊ¼»¯½¨ÖşÅÆ¶Ñ£¬Ï´ÅÆ
-     *  1. ³õÊ¼»¯ÒøĞĞ
-     *  2. Ëæ»ú¸øÍõ¹Ú
-     *  3. ³õÊ¼»¯¸÷Íæ¼ÒÈ«²¿ÊôĞÔ£¬ÓµÓĞµÄ½¨Öş¡¢·ÖÊı¡¢½ğ±ÒµÈ¶¼Çå¿Õ
-     *  4. ³õÊ¼»¯¸÷Íæ¼Ò½ğ±Ò=2
-     *  5. ³õÊ¼»¯¸÷Íæ¼ÒÊÖÅÆ£¬Ãş4ÕÅÅÆ
+     *  1. åˆå§‹åŒ–å»ºç­‘ç‰Œå †ï¼Œæ´—ç‰Œ
+     *  1. åˆå§‹åŒ–é“¶è¡Œ
+     *  2. éšæœºç»™ç‹å† 
+     *  3. åˆå§‹åŒ–å„ç©å®¶å…¨éƒ¨å±æ€§ï¼Œæ‹¥æœ‰çš„å»ºç­‘ã€åˆ†æ•°ã€é‡‘å¸ç­‰éƒ½æ¸…ç©º
+     *  4. åˆå§‹åŒ–å„ç©å®¶é‡‘å¸=2
+     *  5. åˆå§‹åŒ–å„ç©å®¶æ‰‹ç‰Œï¼Œæ‘¸4å¼ ç‰Œ
      */
     var self = this;
-    this.fsm.init();    //²»ÖªµÀÕâÑùĞ´ĞĞ²»ĞĞ£¿
+    this.fsm.init();    //ä¸çŸ¥é“è¿™æ ·å†™è¡Œä¸è¡Œï¼Ÿ
 
     this.pile.reset();
 
@@ -63,29 +64,29 @@ game.init = function(){
 
 game.startRolePicking = function(){
     /**
-     * Á½²½×ß£º
-     * 1. ¿Û1ÕÅÅÆ£º
-     *      ÎŞÂÛÈçºÎ£¬¶¼ÏÈ¿Û1ÕÅ£¬Ëæ»úµÄ¡£
+     * ä¸¤æ­¥èµ°ï¼š
+     * 1. æ‰£1å¼ ç‰Œï¼š
+     *      æ— è®ºå¦‚ä½•ï¼Œéƒ½å…ˆæ‰£1å¼ ï¼Œéšæœºçš„ã€‚
      *      ----------
-     *      Èç¹û Íæ¼ÒÊıgame.totalPlayer == ½ÇÉ«×ÜÊıroleSet.size - 1
-     *      Ôò ¿Û0ÕÅÅÆ
-     *      Èç¹û Íæ¼ÒÊıgame.totalPlayer < ½ÇÉ«×ÜÊıroleSet.size - 1
-     *      Ôò ¿Û1ÕÅÅÆ
-     * 2. ·­¿ªÈô¸ÉÕÅ²»¿ÉÑ¡µÄÅÆ£º
-     *      Èç¹û core.totalPlayer >= 4 ÇÒ <=6 :
-         *      Ä¿µÄÊÇ£¬ÁôÏÂ±ÈÍæ¼ÒÊı¶à1µÄ¿ÉÑ¡ÅÆÊı¡£
-         *      ·­¿ªµÄ²»¿ÉÑ¡µÄ½ÇÉ«Êı£º
+     *      å¦‚æœ ç©å®¶æ•°game.totalPlayer == è§’è‰²æ€»æ•°roleSet.size - 1
+     *      åˆ™ æ‰£0å¼ ç‰Œ
+     *      å¦‚æœ ç©å®¶æ•°game.totalPlayer < è§’è‰²æ€»æ•°roleSet.size - 1
+     *      åˆ™ æ‰£1å¼ ç‰Œ
+     * 2. ç¿»å¼€è‹¥å¹²å¼ ä¸å¯é€‰çš„ç‰Œï¼š
+     *      å¦‚æœ core.totalPlayer >= 4 ä¸” <=6 :
+     *      ç›®çš„æ˜¯ï¼Œç•™ä¸‹æ¯”ç©å®¶æ•°å¤š1çš„å¯é€‰ç‰Œæ•°ã€‚
+     *      ç¿»å¼€çš„ä¸å¯é€‰çš„è§’è‰²æ•°ï¼š
          *      roleSet.size - (core.totalPlayer + 1) -1
-     *      Èç¹û core.totalPlayer == 7£º
-     *          ·­¿ª 0 ÕÅ¡£
+     *      å¦‚æœ core.totalPlayer == 7ï¼š
+     *          ç¿»å¼€ 0 å¼ ã€‚
      *
-     * 3. Ö¸¶¨ core.curPlayer = crownOwner
+     * 3. æŒ‡å®š core.curPlayer = crownOwner
      *
-     * 4. Ïë channel ·¢³öÓÉ curPlayer ¿ªÊ¼Ñ¡½ÇÉ«µÄÍ¨Öª£»
-     * 5. Ïò curPlayer ·¢³ö¿ÉÑ¡½ÇÉ«ÁĞ±í£»
+     * 4. æƒ³ channel å‘å‡ºç”± curPlayer å¼€å§‹é€‰è§’è‰²çš„é€šçŸ¥ï¼›
+     * 5. å‘ curPlayer å‘å‡ºå¯é€‰è§’è‰²åˆ—è¡¨ï¼›
      */
     var roleSetSize = this.roleSet.roleList.length;
-    if(this.totalPlayer == roleSetSize - 1){
+    if (this.totalPlayer === roleSetSize - 1) {
         this.roleSet.banAndHide();
     }
 
@@ -110,37 +111,37 @@ game.takeCoins = function(count, player){
 
 function loopRolePick(){
     /**
-     *  ±éÀú£¨while true£©//È«²¿Íæ¼Ò£º
-     *      1. ·¢ channel ÏûÏ¢£ºµ±Ç° curPlayer ºÅÍæ¼ÒÕıÔÚÑ¡½ÇÉ«£»
-     *      2. Ïò curPlayer ºÅÍæ¼Ò·¢ËÍ¿ÉÑ¡½ÇÉ«ÁĞ±í£¨ÓÃboolÊı×é »òÕß ÓÃ½ÇÉ«±àºÅµÄÊı×é£©
-     *      3. ÊÕµ½Íæ¼Ò·¢»ØµÄÑ¡½ÇÉ«ÏûÏ¢£¬½«ÏàÓ¦½ÇÉ«±ê¼ÇÎªpickable = false£»
-     *      4. curPlayer++£»
-     *      5. continue£»
+     *  éå†ï¼ˆwhile trueï¼‰//å…¨éƒ¨ç©å®¶ï¼š
+     *      1. å‘ channel æ¶ˆæ¯ï¼šå½“å‰ curPlayer å·ç©å®¶æ­£åœ¨é€‰è§’è‰²ï¼›
+     *      2. å‘ curPlayer å·ç©å®¶å‘é€å¯é€‰è§’è‰²åˆ—è¡¨ï¼ˆç”¨boolæ•°ç»„ æˆ–è€… ç”¨è§’è‰²ç¼–å·çš„æ•°ç»„ï¼‰
+     *      3. æ”¶åˆ°ç©å®¶å‘å›çš„é€‰è§’è‰²æ¶ˆæ¯ï¼Œå°†ç›¸åº”è§’è‰²æ ‡è®°ä¸ºpickable = falseï¼›
+     *      4. curPlayer++ï¼›
+     *      5. continueï¼›
      */
 }
 
 
 function playerPickRole(){
     /**
-     * µ±·şÎñÆ÷ÊÕµ½Ò»¸öÍæ¼ÒÍê³ÉÌôÑ¡½ÇÉ«µÄĞÅÏ¢ºó£¬µ÷ÓÃ´Ëº¯Êı¡£
+     * å½“æœåŠ¡å™¨æ”¶åˆ°ä¸€ä¸ªç©å®¶å®ŒæˆæŒ‘é€‰è§’è‰²çš„ä¿¡æ¯åï¼Œè°ƒç”¨æ­¤å‡½æ•°ã€‚
      *
-     * Íæ¼ÒÑ¡ÔñÒ»¸ö½ÇÉ«
-     *  ·şÎñÆ÷ÊÕµ½µÄĞÅÏ¢ msg={
+     * ç©å®¶é€‰æ‹©ä¸€ä¸ªè§’è‰²
+     *  æœåŠ¡å™¨æ”¶åˆ°çš„ä¿¡æ¯ msg={
      *      pick : roleNum
      *  }
      *
-     *  1. ½«½ÇÉ«±ê¼ÇÎª²»¿ÉÑ¡
-     *  2. ¼ÇÂ¼½ÇÉ«¶ÔÓ¦µÄÍæ¼Ò
-     *  3. ÅĞ¶ÏÊÇ·ñ½áÊøÁËÑ¡½ÇÉ«»ØºÏ£¬¼´ÅĞ¶Ïµ±Ç°Íæ¼ÒÊÇ·ñÎª×îºóÒ»¸öÍæ¼Ò£ºcurPlayer == totalPlayer - 1
-     *      ÊÇ£¬Ôò fsm ×´Ì¬×ªÒÆ
-     *      ·ñ£¬Ôò curPlayer++, notifyNextPlayerToPick()
+     *  1. å°†è§’è‰²æ ‡è®°ä¸ºä¸å¯é€‰
+     *  2. è®°å½•è§’è‰²å¯¹åº”çš„ç©å®¶
+     *  3. åˆ¤æ–­æ˜¯å¦ç»“æŸäº†é€‰è§’è‰²å›åˆï¼Œå³åˆ¤æ–­å½“å‰ç©å®¶æ˜¯å¦ä¸ºæœ€åä¸€ä¸ªç©å®¶ï¼šcurPlayer == totalPlayer - 1
+     *      æ˜¯ï¼Œåˆ™ fsm çŠ¶æ€è½¬ç§»
+     *      å¦ï¼Œåˆ™ curPlayer++, notifyNextPlayerToPick()
      *
      *
      *
      *
      */
     roleSet.pick();
-    if(curPlayer == totalPlayer - 1)
+    if (curPlayer === totalPlayer - 1)
     {
         fsm.trans;
     }
@@ -153,12 +154,12 @@ function playerPickRole(){
 }
 
 /**
- * Ñ¡½ÇÉ«¡£
- *  1. ½«½ÇÉ«±ê¼ÇÎª²»¿ÉÑ¡£¬¼ÇÂ¼½ÇÉ«¶ÔÓ¦µÄÍæ¼Ò role.player
- *  2. ¼ÇÂ¼Íæ¼ÒÑ¡È¡µÄ½ÇÉ«    player.role
- *  3. ÅĞ¶ÏÊÇ·ñ½áÊøÁËÑ¡½ÇÉ«»ØºÏ£¬¼´ÅĞ¶Ïµ±Ç°Íæ¼ÒÊÇ·ñÎª×îºóÒ»¸öÍæ¼Ò£ºcurPlayer == totalPlayer - 1
- *      ÊÇ£¬Ôò fsm ×´Ì¬×ªÒÆ£¬½øÈëĞĞ¶¯½×¶Î
- *      ·ñ£¬Ôò curPlayer++, ·µ»ØĞÅÏ¢£¬¹©Íâ½ç notifyNextPlayerToPick()
+ * é€‰è§’è‰²ã€‚
+ *  1. å°†è§’è‰²æ ‡è®°ä¸ºä¸å¯é€‰ï¼Œè®°å½•è§’è‰²å¯¹åº”çš„ç©å®¶ role.player
+ *  2. è®°å½•ç©å®¶é€‰å–çš„è§’è‰²    player.role
+ *  3. åˆ¤æ–­æ˜¯å¦ç»“æŸäº†é€‰è§’è‰²å›åˆï¼Œå³åˆ¤æ–­å½“å‰ç©å®¶æ˜¯å¦ä¸ºæœ€åä¸€ä¸ªç©å®¶ï¼šcurPlayer == totalPlayer - 1
+ *      æ˜¯ï¼Œåˆ™ fsm çŠ¶æ€è½¬ç§»ï¼Œè¿›å…¥è¡ŒåŠ¨é˜¶æ®µ
+ *      å¦ï¼Œåˆ™ curPlayer++, è¿”å›ä¿¡æ¯ï¼Œä¾›å¤–ç•Œ notifyNextPlayerToPick()
  *
  * @param msg
  */
@@ -166,7 +167,7 @@ game.pickRole = function(msg){
     this.roleSet.pick(msg.roleId, msg.uid);
     var player = this.playerDict[msg.uid];
     player.pickRole(msg);
-    if (this.curPlayer != this.totalPlayer - 1) {
+    if (this.curPlayer !== this.totalPlayer - 1) {
         this.curPlayer++;
         return consts.GAME.NEXT_PLAYER_PICK_ROLE;
     } else {
@@ -175,11 +176,11 @@ game.pickRole = function(msg){
 };
 
 /**
- * Íæ¼ÒÊÕË°¡£
- * ¸ù¾İ uid£¬´ÓplayerDictÖĞÕÒÍæ¼Ò£¬±éÀúÆä³¡ÉÏ½¨Öş£¬ÅĞ¶ÏÑÕÉ«ÓëÍæ¼Òµ±Ç°½ÇÉ«ÑÕÉ«ÊÇ·ñÏàµÈ£¬ÊÇÔòÀÛ¼Ó1.
+ * ç©å®¶æ”¶ç¨ã€‚
+ * æ ¹æ® uidï¼Œä»playerDictä¸­æ‰¾ç©å®¶ï¼Œéå†å…¶åœºä¸Šå»ºç­‘ï¼Œåˆ¤æ–­é¢œè‰²ä¸ç©å®¶å½“å‰è§’è‰²é¢œè‰²æ˜¯å¦ç›¸ç­‰ï¼Œæ˜¯åˆ™ç´¯åŠ 1.
  * player.coins += taxes
  *
- * Íê³Éºó£¬Í¨Öª¿Í»§¶Ë¸üĞÂ³¡ÉÏ¾ÖÊÆ updateSituation
+ * å®Œæˆåï¼Œé€šçŸ¥å®¢æˆ·ç«¯æ›´æ–°åœºä¸Šå±€åŠ¿ updateSituation
  * @param msg
  */
 game.collectTaxes = function(msg){
@@ -190,31 +191,31 @@ game.collectTaxes = function(msg){
 };
 
 /**
- * Èç¹ûÍæ¼ÒÑ¡ÔñÄÃ½ğ±Ò£¬¾Í´ÓÒøĞĞÈ¡Á©£¬Í¬Ê±¸øÍæ¼Ò£»
- * Èç¹ûÍæ¼ÒÑ¡ÔñÄÃ½¨ÖşÅÆ£¬¾ÍÅĞ¶ÏÉí·İ£º
- *      ÈôÍæ¼Ò³¡ÉÏÓĞÍ¼Êé¹İ£¬Ôò¿É±£Áô2ÕÅ½¨ÖşÅÆ£»
- *      ÈôÍæ¼Ò³¡ÉÏÓĞÌìÎÄÌ¨£¬ÔòÄÃ½¨ÖşÅÆÊ±¿ÉÒÔ¿ÉÒÔ3Ñ¡1£»
+ * å¦‚æœç©å®¶é€‰æ‹©æ‹¿é‡‘å¸ï¼Œå°±ä»é“¶è¡Œå–ä¿©ï¼ŒåŒæ—¶ç»™ç©å®¶ï¼›
+ * å¦‚æœç©å®¶é€‰æ‹©æ‹¿å»ºç­‘ç‰Œï¼Œå°±åˆ¤æ–­èº«ä»½ï¼š
+ *      è‹¥ç©å®¶åœºä¸Šæœ‰å›¾ä¹¦é¦†ï¼Œåˆ™å¯ä¿ç•™2å¼ å»ºç­‘ç‰Œï¼›
+ *      è‹¥ç©å®¶åœºä¸Šæœ‰å¤©æ–‡å°ï¼Œåˆ™æ‹¿å»ºç­‘ç‰Œæ—¶å¯ä»¥å¯ä»¥3é€‰1ï¼›
  *
- * ÅĞ¶ÏÍæ¼ÒÉí·İÊÇ·ñÎªÉÌÈË£¬ÊÇÔòÔÙ¶àÄÃ1½ğ±Ò£»
+ * åˆ¤æ–­ç©å®¶èº«ä»½æ˜¯å¦ä¸ºå•†äººï¼Œæ˜¯åˆ™å†å¤šæ‹¿1é‡‘å¸ï¼›
  *
- * Í¨Öª¿Í»§¶Ë¸üĞÂ³¡ÉÏ¾ÖÊÆ updateSituation
+ * é€šçŸ¥å®¢æˆ·ç«¯æ›´æ–°åœºä¸Šå±€åŠ¿ updateSituation
  *
  * @param msg
  */
 game.takeCoinsOrBuildingCards = function(msg){
     var self = this;
     var player = this.playerDict[msg.uid];
-    if(msg.take == consts.ACTION.COINS){
+    if (msg.take === consts.ACTION.COINS) {
         this.bank.draw(2);
         player.coins += 2;
     } else {
-        //todo Í¨Öª³¡ÉÏ£¬µ±Ç°Íæ¼ÒÑ¡ÔñÄÃ½¨Öş
+        //todo é€šçŸ¥åœºä¸Šï¼Œå½“å‰ç©å®¶é€‰æ‹©æ‹¿å»ºç­‘
         var pushMsg = {
             uidTakingMove: msg.uid,
             move: consts.MOVE.TAKE_BUILDING_CARDS
         }
         this.notifyCurMove(pushMsg);    //this.channel.pushMessage('onMove', pushMsg);
-        //ÅĞ¶Ï¸øÑ¾·µ»Ø¼¸ÕÅ½¨ÖşÅÆ
+        //åˆ¤æ–­ç»™ä¸«è¿”å›å‡ å¼ å»ºç­‘ç‰Œ
         var count = 2;
         if(player.hasObservatory){
             count = 3;
@@ -223,7 +224,7 @@ game.takeCoinsOrBuildingCards = function(msg){
         for(var i=0; i<count; i++){
             buildingCards4Picking.push(self.pile.draw());
         }
-        //todo ·¢»ØºòÑ¡½¨ÖşÅÆÁĞ±í
+        //todo å‘å›å€™é€‰å»ºç­‘ç‰Œåˆ—è¡¨
         //pushMessageByUids(route,?msg,?uids,?opts,?cb)
         var tuid = msg.uid;
         var tsid = self.channel.getMember(tuid)['sid'];
@@ -238,11 +239,11 @@ game.takeCoinsOrBuildingCards = function(msg){
 };
 
 /**
- * ÓÃ»§·µ»Ø 2Ñ¡1 / 3Ñ¡1 / 2Ñ¡2 µÄ½á¹û£ºpickedList¡¢notPickedList
- * ÒÑÑ¡µÄ£¬Ôö¼Óµ½ÏàÓ¦ÓÃ»§ÊÖÅÆÖĞ£»
- * Î´Ñ¡µÄ£¬»Ø¹éÅÆ¶Ñµ×²¿¡£
+ * ç”¨æˆ·è¿”å› 2é€‰1 / 3é€‰1 / 2é€‰2 çš„ç»“æœï¼špickedListã€notPickedList
+ * å·²é€‰çš„ï¼Œå¢åŠ åˆ°ç›¸åº”ç”¨æˆ·æ‰‹ç‰Œä¸­ï¼›
+ * æœªé€‰çš„ï¼Œå›å½’ç‰Œå †åº•éƒ¨ã€‚
  *
- *  Í¨Öª¿Í»§¶Ë¸üĞÂ³¡ÉÏ¾ÖÊÆ updateSituation
+ *  é€šçŸ¥å®¢æˆ·ç«¯æ›´æ–°åœºä¸Šå±€åŠ¿ updateSituation
  * @param msg
  */
 game.pickBuildingCard = function(msg){
@@ -270,7 +271,7 @@ game.updateSituation = function(msg){
 };
 
 /**
- * Í¨Öª¿Í»§¶Ë£¬µ±Ç°ÊÇË­ÔÚ¸ÉÉ¶¡£
+ * é€šçŸ¥å®¢æˆ·ç«¯ï¼Œå½“å‰æ˜¯è°åœ¨å¹²å•¥ã€‚
  * @param msg
  */
 game.notifyCurMove = function(msg){

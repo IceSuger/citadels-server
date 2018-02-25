@@ -1,14 +1,20 @@
 {
   "development":{
     "connector":[
-      {"id":"connector-server-1", "host":"123.56.1.58", "port":4050, "clientPort": 3050, "frontend": true},
-      {"id":"connector-server-2", "host":"123.56.1.58", "port":4051, "clientPort": 3051, "frontend": true},
-      {"id":"connector-server-3", "host":"123.56.1.58", "port":4052, "clientPort": 3052, "frontend": true}
+      {
+        "id": "connector-server-1",
+        "host": "123.56.1.58",
+        "port": 4050,
+        "clientPort": 3050,
+        "frontend": true
+      }
     ],
     "core":[
-      {"id":"core-server-1", "host":"123.56.1.58", "port":6050},
-      {"id":"core-server-2", "host":"123.56.1.58", "port":6051},
-      {"id":"core-server-3", "host":"123.56.1.58", "port":6052}
+      {
+        "id": "core-server-1",
+        "host": "123.56.1.58",
+        "port": 6050
+      }
     ],
     "gate":[
       {"id": "gate-server-1", "host": "123.56.1.58", "clientPort": 3014, "frontend": true}
@@ -16,14 +22,20 @@
   },
   "production":{
     "connector":[
-      {"id":"connector-server-1", "host":"123.56.1.58", "port":4050, "clientPort": 3050, "frontend": true},
-      {"id":"connector-server-2", "host":"123.56.1.58", "port":4051, "clientPort": 3051, "frontend": true},
-      {"id":"connector-server-3", "host":"123.56.1.58", "port":4052, "clientPort": 3052, "frontend": true}
+      {
+        "id": "connector-server-1",
+        "host": "123.56.1.58",
+        "port": 4050,
+        "clientPort": 3050,
+        "frontend": true
+      }
     ],
     "core":[
-      {"id":"core-server-1", "host":"123.56.1.58", "port":6050},
-      {"id":"core-server-2", "host":"123.56.1.58", "port":6051},
-      {"id":"core-server-3", "host":"123.56.1.58", "port":6052}
+      {
+        "id": "core-server-1",
+        "host": "123.56.1.58",
+        "port": 6050
+      }
     ],
     "gate":[
       {"id": "gate-server-1", "host": "123.56.1.58", "clientPort": 3014, "frontend": true}

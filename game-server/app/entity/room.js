@@ -1,56 +1,108 @@
 /**
  * Created by X93 on 2018/2/13.
  */
-var Game = require('./game')
+var Game = require('./game');
+var Player = require('./player');
+var pomelo = require('pomelo');
 
 var Room = function(msg){
     this.roomId = msg.roomId;
     this.passwd = msg.passwd;
     this.totalPlayer = msg.totalPlayer;
     this.playerCnt = 0;
-    this.readyPlayers = [];
+    this.playerDict = {};  //ä¿å­˜æ•´ä¸ª player å¯¹è±¡
+    this.readyPlayers = []; //ä»…ä¿å­˜ uid
 
     this.channelService = pomelo.app.get('channelService');
-    this.channel = this.channelService.getChannel('room_' + this.roomId, true); //µÚ¶ş¸ö²ÎÊıÎªÕæ±íÊ¾Èôchannel²»´æÔÚ¾ÍĞÂ½¨Ö®
+    this.channel = this.channelService.getChannel('room_' + this.roomId, true); //ç¬¬äºŒä¸ªå‚æ•°ä¸ºçœŸè¡¨ç¤ºè‹¥channelä¸å­˜åœ¨å°±æ–°å»ºä¹‹
     this.game = null;
-
 };
 
 var room = Room.prototype;
 
 Array.prototype.removeByValue = function(val) {
     for(var i=0; i<this.length; i++) {
-        if(this[i] == val) {
+        if (this[i] === val) {
             this.splice(i, 1);
             break;
         }
     }
-};;
+};
+
+room.notifyRoomMemberChange = function () {
+    var msg = {
+        playerDict: this.playerDict
+    };
+    this.channel.pushMessage('roomMemberChange', msg);
+};
+
+room.notifyRoomReadyChange = function () {
+    var msg = {
+        readyPlayers: this.readyPlayers
+    };
+    this.channel.pushMessage('roomReadyChange', msg);
+};
 
 /**
- * ÓĞÍæ¼Ò¶Ï¿ªÁ¬½Ó»òÕßÀë¿ª·¿¼ä¡£
+ * æœ‰ç©å®¶åŠ å…¥æˆ¿é—´ã€‚
+ * åˆå§‹åŒ–ç©å®¶ï¼Œå¹¶é€šçŸ¥æˆ¿é—´å†…æ‰€æœ‰ç©å®¶ï¼ŒåŒ…æ‹¬è‡ªå·±ã€‚
  * @param msg
- * @returns {number}    ·¿¼äµ±Ç°Ê£ÏÂµÄÍæ¼ÒÊı¡£
  */
-room.playerLeave = function(msg){
-    this.playerCnt--;
-    this.readyPlayers.removeByValue(msg.uid);
+room.playerEnter = function (msg) {
+    // this.playerCnt++;
+    this.playerDict[msg.uid] = new Player(msg);
+    this.playerCnt = Object.keys(this.playerDict).length;
+    if (!!this.channel) {
+        this.channel.add(msg.uid, msg.serverId);
+    }
+    this.notifyRoomMemberChange();
+    this.notifyRoomReadyChange();
+};
+
+/**
+ * æœ‰ç©å®¶æ–­å¼€è¿æ¥æˆ–è€…ç¦»å¼€æˆ¿é—´ã€‚
+ * @param uid
+ * @param sid
+ * @returns {number|*}  æˆ¿é—´å½“å‰å‰©ä¸‹çš„ç©å®¶æ•°ã€‚
+ */
+room.playerLeave = function (uid, sid) {
+    delete this.playerDict[uid];
+    this.playerCnt = Object.keys(this.playerDict).length;
+
+    this.readyPlayers.removeByValue(uid);
+
+    var channel = this.channel;
+    // leave channel
+    if (!!channel) {
+        channel.leave(uid, sid);
+    }
+
+    this.notifyRoomMemberChange();
+    this.notifyRoomReadyChange();
+
     return this.playerCnt;
 };
 
 /**
- * Íæ¼Ò×¼±¸¡£
- * µ±Ç°×¼±¸ºóÅĞ¶ÏÊÇ²»ÊÇÈ«²¿¶¼×¼±¸ÁË£¬Èç¹ûÊÇ£¬Ôò¿ªÓÎÏ·¡£this.game = new Game();
+ * ç©å®¶å‡†å¤‡ã€‚
+ * å½“å‰å‡†å¤‡ååˆ¤æ–­æ˜¯ä¸æ˜¯å…¨éƒ¨éƒ½å‡†å¤‡äº†ï¼Œå¦‚æœæ˜¯ï¼Œåˆ™å¼€æ¸¸æˆã€‚this.game = new Game();
  * @param msg
  */
 room.ready = function(msg){
     var self = this;
     var readyCnt = this.readyPlayers.push(msg.uid);
-    if(readyCnt == this.totalPlayer)
+    if (readyCnt === this.totalPlayer)
     {
         this.game = new Game(self);
     }
+    this.notifyRoomReadyChange();
 };
+
+room.cancelReady = function (msg) {
+    this.readyPlayers.removeByValue(msg.uid);
+    this.notifyRoomReadyChange();
+};
+
 
 room.pickRole = function(msg){
     var game = this.game;

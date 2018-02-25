@@ -8,7 +8,7 @@ var Bank = function(){
 };
 
 /**
- * todo �������ʣ1�飬��Ҫȡ3�飬զ�죿�Ǹ�1�飿���Ǹɴ಻��ȡ��
+ * todo 如果银行剩1块，但要取3块，咋办？是给1块？还是干脆不让取？
  * @param count
  */
 Bank.prototype.draw = function(count){

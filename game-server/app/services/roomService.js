@@ -6,7 +6,7 @@ var Room = require('../entity/room');
 
 var RoomService = function() {
     /**
-     * ¹¹Ôìº¯Êı
+     * æ„é€ å‡½æ•°
      * @type {RoomService}
      */
     this.curMaxRoomId = 0;
@@ -17,32 +17,53 @@ var RoomService = function() {
 
 var roomService = RoomService.prototype;
 
-
+/**
+ * msg = {
+ *  playerTotal,
+ * }
+ *
+ * @param msg
+ */
 roomService.createRoom = function(msg) {
     var roomId = this.curMaxRoomId + 1;
     msg.roomId = roomId;
     this.roomDict[roomId] = new Room(msg);
+    //test
+    console.log('After creating=== ');
+    console.log(this.roomDict);
     this.curMaxRoomId = roomId;
+    return roomId; //æˆ–è€…""+roomId
 };
 
 /**
- * Íæ¼Ò½øÈë·¿¼ä¡£
- * ÅĞ¶Ï·¿¼äÊÇ·ñ´æÔÚ£¬²»´æÔÚÔò·µ»Ø ERROR_ROOM_NOT_EXIST£»
- * ÅĞ¶Ï·¿¼äÃÜÂëÊÇ·ñÕıÈ·£¬²»ÕıÈ·Ôò·µ»Ø ERROR_WRONG_ROOM_PASSWD£»
- * ÅĞ¶Ï·¿¼äÊÇ·ñÈËÂú£¬ÂúÁËÔò·µ»Ø ERROR_ROOM_FULL;
- * room.playerEnter()£»
+ * ç©å®¶è¿›å…¥æˆ¿é—´ã€‚
+ * åˆ¤æ–­æˆ¿é—´æ˜¯å¦å­˜åœ¨ï¼Œä¸å­˜åœ¨åˆ™è¿”å› ERROR_ROOM_NOT_EXISTï¼›
+ * åˆ¤æ–­æˆ¿é—´å¯†ç æ˜¯å¦æ­£ç¡®ï¼Œä¸æ­£ç¡®åˆ™è¿”å› ERROR_WRONG_ROOM_PASSWDï¼›
+ * åˆ¤æ–­æˆ¿é—´æ˜¯å¦äººæ»¡ï¼Œæ»¡äº†åˆ™è¿”å› ERROR_ROOM_FULL;
+ * room.playerEnter()ï¼›
+ * --------------------------------
+ * msg={
+ *  uid,
+ *  roomId,
+ *  passwd
+ * }
+ *
  * @param msg
  */
 roomService.enterRoom = function(msg) {
     var room = this.roomDict[msg.roomId];
+    //test
+    console.log(msg);
+    console.log('After entering===');
+    console.log(this.roomDict);
     if(!room){
         return consts.ENTER_ROOM.ERROR_ROOM_NOT_EXIST;
     }
-    if(msg.passwd != room.passwd)
+    if (msg.passwd !== room.passwd)
     {
         return consts.ENTER_ROOM.ERROR_WRONG_ROOM_PASSWD;
     }
-    if(room.totalPlayer == room.playerCnt)
+    if (room.totalPlayer === room.playerCnt)
     {
         return consts.ENTER_ROOM.ERROR_ROOM_FULL;
     }
@@ -54,17 +75,27 @@ roomService.enterRoom = function(msg) {
  * TODO
  * @param msg
  */
-roomService.leaveRoom = function(msg) {
-
+roomService.leaveRoom = function (uid, sid, roomId) {
+    var room = this.roomDict[roomId];
+    var playerCnt = room.playerLeave(uid, sid);
+    if (playerCnt === 0) {
+        //å¦‚æœå…¨éƒ¨ç©å®¶éƒ½é€€å‡ºäº†ï¼Œå°±å¹²æ‰è¿™ä¸ªroom
+        delete this.roomDict[roomId];
+    }
 };
 
 /**
- * Íæ¼Ò×¼±¸
+ * ç©å®¶å‡†å¤‡
  * @param msg
  */
 roomService.ready = function(msg){
     var room = this.roomDict[msg.roomId];
     room.ready(msg);
+};
+
+roomService.cancelReady = function (msg) {
+    var room = this.roomDict[msg.roomId];
+    room.cancelReady(msg);
 };
 
 roomService.pickRole = function(msg){

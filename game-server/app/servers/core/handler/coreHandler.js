@@ -31,7 +31,7 @@ handler.send = function(msg, session, next) {
 	channel = channelService.getChannel(rid, false);
 
 	//the target is all users
-	if(msg.target == '*') {
+    if (msg.target === '*') {
 		channel.pushMessage('onplay', param);
 	}
 	//the target is specific user
@@ -50,12 +50,21 @@ handler.send = function(msg, session, next) {
 
 
 /**
- * Íæ¼Ò×¼±¸¡£
+ * çŽ©å®¶å‡†å¤‡ã€‚
  * @param msg
  * @param session
  * @param next
  */
 handler.ready = function(msg, session, next){
 	msg.uid = session.uid;
+    msg.roomId = session.roomId;
+    var ret = this.roomService.ready(msg);
+    next(ret);
+};
 
-}
+handler.cancelReady = function (msg, session, next) {
+    msg.uid = session.uid;
+    msg.roomId = session.roomId;
+    var ret = this.roomService.cancelReady(msg);
+    next(ret);
+};

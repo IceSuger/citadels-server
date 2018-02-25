@@ -12,15 +12,15 @@ var Role = function(staticRole){
     this.bannedAndHidden = false;
     this.playerNum = -1;
     this.pickable = true;
-}
+};
 
 var RoleSet = function() {
     /**
-     * ¹¹Ôìº¯Êý
+     * æž„é€ å‡½æ•°
      * @type {RoleSet}
      */
     var self = this;
-    //self.roleList = [];
+    self.roleList = [];
     self.reset();
 };
 
@@ -42,7 +42,7 @@ RoleSet.prototype.banAndHide = function(){
 RoleSet.prototype.banAndShow = function(){
     var i = Math.random();  //0~1 random number
     var choosen = Math.ceil(i * staticRoles.length);    //1~8 random int
-    if(choosen == 4 || this.roleList[choosen].bannedAndHidden == true || this.roleList[choosen].bannedAndShown == true)
+    if (choosen === 4 || this.roleList[choosen].bannedAndHidden === true || this.roleList[choosen].bannedAndShown === true)
     {
         i = Math.random();
         choosen = Math.ceil(i * staticRoles.length);

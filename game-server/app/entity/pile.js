@@ -6,11 +6,11 @@ var staticBuilidngCards = require('../consts/buildings');
 
 var Pile = function(){
     /**
-     * ¹¹Ôìº¯Êı¡£
-     * ÆäÖĞ£¬ÅÆ¶Ñ pile ºÍ ÆúÅÆ¶Ñ deadwood ÖĞ£¬
-     * ±£´æµÄ¶¼ÊÇ staticBuildingCards.id£¬¼´ÅÆ±¾ÉíµÄid£¨²»Í¬ÄÚÈİµÄÅÆÓµÓĞ²»Í¬µÄid£¬ÏàÍ¬idµÄÅÆÄÚÈİÏàÍ¬£¬¼û consts.js£©
-     * ÅÆ¶ÑÊÇÓÃ Array ÊµÏÖµÄ¡£
-     * ÅÆ¶Ñ¶¥²¿Îª Array µÄÍ·²¿£¬ÅÆ¶Ñµ×²¿Îª Array µÄÎ²²¿¡£
+     * æ„é€ å‡½æ•°ã€‚
+     * å…¶ä¸­ï¼Œç‰Œå † pile å’Œ å¼ƒç‰Œå † deadwood ä¸­ï¼Œ
+     * ä¿å­˜çš„éƒ½æ˜¯ staticBuildingCards.idï¼Œå³ç‰Œæœ¬èº«çš„idï¼ˆä¸åŒå†…å®¹çš„ç‰Œæ‹¥æœ‰ä¸åŒçš„idï¼Œç›¸åŒidçš„ç‰Œå†…å®¹ç›¸åŒï¼Œè§ consts.jsï¼‰
+     * ç‰Œå †æ˜¯ç”¨ Array å®ç°çš„ã€‚
+     * ç‰Œå †é¡¶éƒ¨ä¸º Array çš„å¤´éƒ¨ï¼Œç‰Œå †åº•éƒ¨ä¸º Array çš„å°¾éƒ¨ã€‚
      * @type {Array}
      */
     this.pile = [];
@@ -31,7 +31,7 @@ function shuffle(array){
 }
 
 /**
- * ³õÊ¼»¯ÅÆ¶Ñ£¬¼´½«ÅÆ¶ÑÖÃ¿Õ£¬È»ºó¸ù¾İÓÎÏ·ÅäÖÃ£¬ÏòÅÆ¶ÑÖĞÌîÈëÒ»¶¨ÊıÁ¿µÄ¸÷ÖÖ½¨ÖşÅÆ¡£
+ * åˆå§‹åŒ–ç‰Œå †ï¼Œå³å°†ç‰Œå †ç½®ç©ºï¼Œç„¶åæ ¹æ®æ¸¸æˆé…ç½®ï¼Œå‘ç‰Œå †ä¸­å¡«å…¥ä¸€å®šæ•°é‡çš„å„ç§å»ºç­‘ç‰Œã€‚
  */
 pile.initPile = function(){
     var self = this;
@@ -44,7 +44,7 @@ pile.initPile = function(){
 };
 
 /**
- * ÖØÖÃÅÆ¶Ñ£¨°üÀ¨³õÊ¼»¯¡¢Ï´ÅÆ£©ºÍÆúÅÆ¶Ñ¡£
+ * é‡ç½®ç‰Œå †ï¼ˆåŒ…æ‹¬åˆå§‹åŒ–ã€æ´—ç‰Œï¼‰å’Œå¼ƒç‰Œå †ã€‚
  */
 pile.reset = function(){
     this.initPile();
@@ -53,8 +53,8 @@ pile.reset = function(){
 };
 
 /**
- * ´ÓÅÆ¶Ñ¶¥²¿ÃşÒ»ÕÅÅÆ¡£
- * @returns {T} Ãşµ½µÄÅÆµÄid£¨Èçconsts.BUILDINGS.PUB£©¡£
+ * ä»ç‰Œå †é¡¶éƒ¨æ‘¸ä¸€å¼ ç‰Œã€‚
+ * @returns {T} æ‘¸åˆ°çš„ç‰Œçš„idï¼ˆå¦‚consts.BUILDINGS.PUBï¼‰ã€‚
  */
 pile.draw = function(){
     return this.pile.shift();

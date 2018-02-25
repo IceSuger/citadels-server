@@ -9,7 +9,8 @@ exp.core = function(session, msg, app, cb) {
 		return;
 	}
 
-	var res = dispatcher.dispatch(session.get('rid'), coreServers);
+    // console.log(session);
+    var res = dispatcher.dispatch(session.get('roomId'), coreServers);
 
 	cb(null, res.id);
 };

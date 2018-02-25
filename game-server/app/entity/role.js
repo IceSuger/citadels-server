@@ -1,16 +1,16 @@
 /**
  * Created by X93 on 2018/2/14.
  */
-role//¾²Ì¬µÄ½ÇÉ«£¨Ó¢ĞÛ£©ĞÅÏ¢
-{
-    name_zh //ÖĞÎÄÃû
-    color //0~5
-    ability //º¯ÊıÖ¸Õë
-    description //½éÉÜ
-    wholePic    //Ô­»­
-    avatar  //Í·Ïñ
-
-}
+// role//é™æ€çš„è§’è‰²ï¼ˆè‹±é›„ï¼‰ä¿¡æ¯
+// {
+//     name_zh //ä¸­æ–‡å
+//     color //0~5
+//     ability //å‡½æ•°æŒ‡é’ˆ
+//     description //ä»‹ç»
+//     wholePic    //åŸç”»
+//     avatar  //å¤´åƒ
+//
+// }
 
 var consts = require('../consts/consts');
 

@@ -4,10 +4,14 @@
 var consts = require('../consts/consts');
 
 var Player = function(data){
-    this.coins = 0;
     this.seatId = 0;
-    this.buildingDict = {}; //ÒÑ½¨ÔìµÄ½¨Öþ
-    this.handCards = [];    //ÊÖÅÆ½¨Öþ
+    this.wxNickName = data.wxNickName;
+    this.wxAvatar = data.wxAvatar;
+    this.uid = data.uid;
+
+    this.coins = 0;
+    this.buildingDict = {}; //å·²å»ºé€ çš„å»ºç­‘
+    this.handCards = [];    //æ‰‹ç‰Œå»ºç­‘
     this.role = consts.ROLES.NONE;
     this.hasLibrary = false;
     this.hasMagicSchool = false;
@@ -29,7 +33,7 @@ player.pickRole = function(data){
 };
 
 /**
- * Ôö¼ÓÒ»ÕÅÖ¸¶¨µÄÊÖÅÆ
+ * å¢žåŠ ä¸€å¼ æŒ‡å®šçš„æ‰‹ç‰Œ
  * @param data
  */
 player.addHandCard = function(data){
@@ -37,7 +41,7 @@ player.addHandCard = function(data){
 };
 
 /**
- * ÏûºÄÒ»ÕÅÖ¸¶¨µÄÊÖÅÆ
+ * æ¶ˆè€—ä¸€å¼ æŒ‡å®šçš„æ‰‹ç‰Œ
  * @param data
  */
 player.spendHandCard = function(data){
@@ -45,7 +49,7 @@ player.spendHandCard = function(data){
 };
 
 /**
- * ½¨ÔìÒ»ÕÅÖ¸¶¨µÄÊÖÅÆ
+ * å»ºé€ ä¸€å¼ æŒ‡å®šçš„æ‰‹ç‰Œ
  * @param data
  */
 player.build = function(data){

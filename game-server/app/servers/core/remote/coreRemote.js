@@ -5,6 +5,7 @@ module.exports = function(app) {
 var coreRemote = function(app) {
 	this.app = app;
 	this.channelService = app.get('channelService');
+    this.roomService = app.get('roomService');
 };
 
 /**
@@ -62,34 +63,54 @@ coreRemote.prototype.get = function(name, flag) {
  *
  */
 coreRemote.prototype.kick = function(uid, sid, name, cb) {
-	var channel = this.channelService.getChannel(name, false);
-	// leave channel
-	if( !! channel) {
-		channel.leave(uid, sid);
-	}
-	var username = uid.split('*')[0];
-	var param = {
-		route: 'onLeave',
-		user: username
-	};
-	channel.pushMessage(param);
-	cb();
+    var channel = this.channelService.getChannel(name, false);
+    // leave channel
+    if (!!channel) {
+        channel.leave(uid, sid);
+    }
+    var username = uid.split('*')[0];
+    var param = {
+        route: 'onLeave',
+        user: username
+    };
+    channel.pushMessage(param);
+    cb();
 };
 
+
+coreRemote.prototype.leave = function (uid, sid, roomId, cb) {
+    this.roomService.leaveRoom(uid, sid, roomId);
+
+
+    var channel = this.channelService.getChannel(name, false);
+    // leave channel
+    if (!!channel) {
+        channel.leave(uid, sid);
+    }
+    var username = uid.split('*')[0];
+    var param = {
+        route: 'onLeave',
+        user: username
+    };
+    channel.pushMessage(param);
+    cb();
+};
 
 /**
  * 新建房间/新建channel
  *
  */
-coreRemote.prototype.createRoom = function(cb) {
-	var curMaxRid = this.app.get("curMaxRoomId");
-	var name = ""+curMaxRid;
-	this.app.set("curMaxRoomId", curMaxRid+1);
-	var channel = this.channelService.createChannel(name);
+coreRemote.prototype.createRoom = function (msg, cb) {
+    var roomId = this.roomService.createRoom(msg);
+    // var curMaxRid = this.app.get("curMaxRoomId");
+    // var name = ""+curMaxRid;
+    // this.app.set("curMaxRoomId", curMaxRid+1);
+    // var channel = this.channelService.createChannel(name);
 
-	cb(name);
+    cb(roomId);
 };
 
-coreRemote.prototype.enterRoom = function(cb) {
-
+coreRemote.prototype.enterRoom = function (msg, cb) {
+    var code = this.roomService.enterRoom(msg);
+    cb(code);
 };
