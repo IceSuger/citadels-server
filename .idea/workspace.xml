@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6b20a03c-1453-4521-a035-3fb9f45e0d19" name="Default" comment="1. 多人进入房间可用，但可能还有bug；&#10;2. 离开房间或断开连接，将从room中删除player，已测试；&#10;3. 玩家准备和取消准备，已测试。">
+    <list default="true" id="6b20a03c-1453-4521-a035-3fb9f45e0d19" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/servers/connector/handler/entryHandler.js" afterPath="$PROJECT_DIR$/game-server/app/servers/connector/handler/entryHandler.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js" afterPath="$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/servers/core/remote/coreRemote.js" afterPath="$PROJECT_DIR$/game-server/app/servers/core/remote/coreRemote.js" />
       <change beforePath="$PROJECT_DIR$/game-server/app/services/roomService.js" afterPath="$PROJECT_DIR$/game-server/app/services/roomService.js" />
     </list>
     <ignored path="citadels-server.iws" />
@@ -107,21 +104,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="roomService.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="roomService.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/game-server/app/services/roomService.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="94" column="0" lean-forward="false" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
+            <state relative-caret-position="527">
+              <caret line="85" column="46" lean-forward="false" selection-start-line="85" selection-start-column="46" selection-end-line="85" selection-end-column="46" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="coreRemote.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="coreRemote.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game-server/app/servers/core/remote/coreRemote.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="184">
-              <caret line="64" column="53" lean-forward="false" selection-start-line="64" selection-start-column="53" selection-end-line="64" selection-end-column="53" />
+            <state relative-caret-position="439">
+              <caret line="79" column="0" lean-forward="true" selection-start-line="79" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -159,9 +156,9 @@
         <option value="$PROJECT_DIR$/game-server/app/entity/game.js" />
         <option value="$PROJECT_DIR$/game-server/app/entity/room.js" />
         <option value="$PROJECT_DIR$/game-server/app/servers/core/remote/coreRemote.js" />
-        <option value="$PROJECT_DIR$/game-server/app/services/roomService.js" />
         <option value="$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js" />
         <option value="$PROJECT_DIR$/game-server/app/servers/connector/handler/entryHandler.js" />
+        <option value="$PROJECT_DIR$/game-server/app/services/roomService.js" />
       </list>
     </option>
   </component>
@@ -395,7 +392,7 @@
       <updated>1518529829576</updated>
       <workItem from="1519473153867" duration="1806000" />
       <workItem from="1519532172582" duration="4828000" />
-      <workItem from="1519541957066" duration="27437000" />
+      <workItem from="1519541957066" duration="28671000" />
     </task>
     <task id="LOCAL-00001" summary="1. 多人进入房间可用，但可能还有bug；&#10;2. 离开房间或断开连接，将从room中删除player，但可能还有bug；&#10;3. 玩家准备和取消准备，还未测试，可能有bug。">
       <created>1519571699091</created>
@@ -404,11 +401,18 @@
       <option name="project" value="LOCAL" />
       <updated>1519571699092</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="1. 多人进入房间可用，但可能还有bug；&#10;2. 离开房间或断开连接，将从room中删除player，已测试；&#10;3. 玩家准备和取消准备，已测试。">
+      <created>1519613206487</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1519613206487</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34071000" />
+    <option name="totallyTimeSpent" value="35305000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1015" extended-state="6" />
@@ -830,14 +834,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/services/roomService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="94" column="0" lean-forward="false" selection-start-line="94" selection-start-column="0" selection-end-line="94" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -856,8 +852,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/servers/core/remote/coreRemote.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="184">
-          <caret line="64" column="53" lean-forward="false" selection-start-line="64" selection-start-column="53" selection-end-line="64" selection-end-column="53" />
+        <state relative-caret-position="439">
+          <caret line="79" column="0" lean-forward="true" selection-start-line="79" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/services/roomService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="85" column="46" lean-forward="false" selection-start-line="85" selection-start-column="46" selection-end-line="85" selection-end-column="46" />
           <folding />
         </state>
       </provider>

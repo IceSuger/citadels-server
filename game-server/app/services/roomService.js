@@ -78,12 +78,15 @@ roomService.enterRoom = function(msg) {
  * @param roomId
  */
 roomService.leaveRoom = function (uid, sid, roomId) {
-    console.log(typeof roomId);
+    // console.log(typeof roomId);
     var room = this.roomDict[roomId];
+    if (!room) {
+        return;
+    }
     var playerCnt = room.playerLeave(uid, sid);
     if (playerCnt === 0) {
         //如果全部玩家都退出了，就干掉这个room
-        //delete this.roomDict[roomId];
+        delete this.roomDict[roomId];
         console.log('ROOM DELETED: ' + roomId);
     }
 };
@@ -93,8 +96,8 @@ roomService.leaveRoom = function (uid, sid, roomId) {
  * @param msg
  */
 roomService.ready = function(msg){
-    console.log('In roomService.ready, msg is:');
-    console.log(msg);
+    // console.log('In roomService.ready, msg is:');
+    // console.log(msg);
     var room = this.roomDict[msg.roomId];
     room.ready(msg);
     return consts.GET_READY.OK;
