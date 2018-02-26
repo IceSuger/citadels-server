@@ -84,8 +84,11 @@ module.exports = {
     },
 
     MOVE: {
+        DO_SOMETHING: 0,
         TAKE_BUILDING_CARDS: 1,
+        TAKE_COINS: 2,
+        PICKING_ROLE: 3
     },
 
-    BANK_INIT_COINS: 30
+    BANK_INIT_COINS: 300
 };

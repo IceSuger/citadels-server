@@ -2,6 +2,7 @@
  * Created by X93 on 2018/2/14.
  */
 var staticRoles = require('./role');
+var consts = require('../consts/consts');
 
 var Role = function(staticRole){
     this.id = staticRole.id;
@@ -21,15 +22,18 @@ var RoleSet = function() {
      */
     var self = this;
     self.roleList = [];
+    self.bannedAndShownList = [];
     self.reset();
 };
 
 RoleSet.prototype.reset = function(){
+    var self = this;
     this.roleList = [];
     staticRoles.forEach(function(staticRole) {
         var r = new Role(staticRole);
         self.roleList[staticRole.id] = r;
     });
+    this.bannedAndShownList = [];
 };
 
 RoleSet.prototype.banAndHide = function(){
@@ -42,13 +46,14 @@ RoleSet.prototype.banAndHide = function(){
 RoleSet.prototype.banAndShow = function(){
     var i = Math.random();  //0~1 random number
     var choosen = Math.ceil(i * staticRoles.length);    //1~8 random int
-    if (choosen === 4 || this.roleList[choosen].bannedAndHidden === true || this.roleList[choosen].bannedAndShown === true)
+    while (choosen === consts.ROLES.KING || this.roleList[choosen].bannedAndHidden === true || this.roleList[choosen].bannedAndShown === true)
     {
         i = Math.random();
         choosen = Math.ceil(i * staticRoles.length);
     }
     this.roleList[choosen].bannedAndShown = true;
     this.roleList[choosen].pickable = false;
+    this.bannedAndShownList.push(choosen);
 };
 
 RoleSet.prototype.banAndShowMany = function(count){

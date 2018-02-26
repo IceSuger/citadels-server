@@ -14,3 +14,9 @@ var Bank = function(){
 Bank.prototype.draw = function(count){
     this.coins -= count;
 };
+
+Bank.prototype.reset = function () {
+    this.coins = consts.BANK_INIT_COINS;
+};
+
+module.exports = Bank;

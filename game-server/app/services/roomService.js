@@ -100,6 +100,7 @@ roomService.ready = function(msg){
     // console.log(msg);
     var room = this.roomDict[msg.roomId];
     room.ready(msg);
+    console.log('到不了这？');
     return consts.GET_READY.OK;
 };
 

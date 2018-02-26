@@ -4,14 +4,22 @@
 var StateMachine = require('javascript-state-machine');
 var consts = require('../consts/consts');
 var RoleSet = require('./roleSet');
+var Pile = require('./pile');
+var Bank = require('./bank');
 
 var Game = function(room) {
+    var self = this;
     this.curPlayer = 0;
     this.totalPlayer = room.totalPlayer;
     // channel 这俩对象用来向客户端发消息
     this.channelService = room.channelService;
     this.channel = room.channel;
-    this.playerDict = {};
+    this.playerDict = room.playerDict;
+    this.playerList = [];
+    for (var p in self.playerDict) {
+        self.playerList.push(self.playerDict[p]);
+    }
+
     this.roleSet = new RoleSet();
     this.pickableRoles = [];
     this.crownOwner = 0;
@@ -34,7 +42,9 @@ var Game = function(room) {
     this.pile = new Pile();
     this.bank = new Bank();
 
+    console.log("Before Game.init ");
     this.init();
+    console.log("After Game.init ");
 };
 
 var game = Game.prototype;
@@ -47,18 +57,24 @@ game.init = function(){
      *  3. 初始化各玩家全部属性，拥有的建筑、分数、金币等都清空
      *  4. 初始化各玩家金币=2
      *  5. 初始化各玩家手牌，摸4张牌
+     *  6. fsm状态转换，startRolePick
      */
     var self = this;
-    this.fsm.init();    //不知道这样写行不行？
+    // console.log("BEFORE fsm.init");
+    // console.log(this.fsm.state);
+    // console.log("AFTER fsm.init");
 
     this.pile.reset();
 
     this.bank.reset();
 
     var i = Math.random();  //0~1 random number
-    this.crownOwner = Math.ceil(i * this.totalPlayer);    //1~8 random int
+    this.crownOwner = Math.floor(i * this.totalPlayer);    //0~7 random int
 
-
+    // console.log("皇冠交给："+this.crownOwner);
+    this.fsm.startRolePick();
+    // console.log(this.fsm.state);
+    // console.log("Game init 最后一行。");
 };
 
 
@@ -75,7 +91,7 @@ game.startRolePicking = function(){
      * 2. 翻开若干张不可选的牌：
      *      如果 core.totalPlayer >= 4 且 <=6 :
      *      目的是，留下比玩家数多1的可选牌数。
-     *      翻开的不可选的角色数：
+     *      翻开的不可选的角色数：（下面代码真正实现时，翻开的不可选的牌要再-1张，因为roleList[0]是空的，只占个位置，则roleList实际上多了一个元素）
          *      roleSet.size - (core.totalPlayer + 1) -1
      *      如果 core.totalPlayer == 7：
      *          翻开 0 张。
@@ -84,24 +100,43 @@ game.startRolePicking = function(){
      *
      * 4. 想 channel 发出由 curPlayer 开始选角色的通知；
      * 5. 向 curPlayer 发出可选角色列表；
+     *==================================================
+     * 针对2人的，测试逻辑：
+     *  扣一张牌；
+     *  翻开roleSetSize - totalPlayer - 1 张牌;
+     *  curPlayer = crown;
+     *  notifyAll;
+     *  notifyPlayer;
      */
     var roleSetSize = this.roleSet.roleList.length;
-    if (this.totalPlayer === roleSetSize - 1) {
-        this.roleSet.banAndHide();
-    }
+    // if (this.totalPlayer === roleSetSize - 1) {
+    this.roleSet.banAndHide();  //无论几个人玩，都是先扣一张牌。
+    // }
 
-    if(this.totalPlayer >= 4 && this.totalPlayer <= 6)
-    {
-        this.roleSet.banAndShowMany( roleSetSize - (this.totalPlayer + 1) - 1 );
-    }
+    // if(this.totalPlayer >= 4 && this.totalPlayer <= 6)
+    // {
+    //     this.roleSet.banAndShowMany( roleSetSize - 1 - (this.totalPlayer + 1) - 1 );
+    // }
+    //用2人测试一下。
+    this.roleSet.banAndShowMany(roleSetSize - 1 - (this.totalPlayer + 1) - 1);
 
     this.curPlayer = this.crownOwner;
 
-    //todo
-    this.channel.pushMessage();
+    // var msg = {
+    //     move: consts.MOVE.PICKING_ROLE,
+    //     crownOwner: this.crownOwner,
+    //     banShowList: this.roleSet.bannedAndShownList
+    // };
+    // this.notifyCurMove(msg);
+    this.notifyPickingRole();
 
-    //todo
-    this.channelService.pushMessageByUids();
+    // //todo Alpha版暂时向客户端发送完整角色列表和完整局势，正式版再考虑只发给每个客户端其可知部分。
+    // // this.channelService.pushMessageByUids();
+    // var msg1 = {
+    //     pickableRoles: this.pickableRoles,
+    //
+    // }
+    // this.notifyOnePlayer(msg1);
 };
 
 game.takeCoins = function(count, player){
@@ -109,49 +144,7 @@ game.takeCoins = function(count, player){
     player.coins += count;
 }
 
-function loopRolePick(){
-    /**
-     *  遍历（while true）//全部玩家：
-     *      1. 发 channel 消息：当前 curPlayer 号玩家正在选角色；
-     *      2. 向 curPlayer 号玩家发送可选角色列表（用bool数组 或者 用角色编号的数组）
-     *      3. 收到玩家发回的选角色消息，将相应角色标记为pickable = false；
-     *      4. curPlayer++；
-     *      5. continue；
-     */
-}
 
-
-function playerPickRole(){
-    /**
-     * 当服务器收到一个玩家完成挑选角色的信息后，调用此函数。
-     *
-     * 玩家选择一个角色
-     *  服务器收到的信息 msg={
-     *      pick : roleNum
-     *  }
-     *
-     *  1. 将角色标记为不可选
-     *  2. 记录角色对应的玩家
-     *  3. 判断是否结束了选角色回合，即判断当前玩家是否为最后一个玩家：curPlayer == totalPlayer - 1
-     *      是，则 fsm 状态转移
-     *      否，则 curPlayer++, notifyNextPlayerToPick()
-     *
-     *
-     *
-     *
-     */
-    roleSet.pick();
-    if (curPlayer === totalPlayer - 1)
-    {
-        fsm.trans;
-    }
-    else
-    {
-        curPlayer = curPlayer + 1;
-        notifyNextPlayerToPick();
-    }
-
-}
 
 /**
  * 选角色。
@@ -275,7 +268,17 @@ game.updateSituation = function(msg){
  * @param msg
  */
 game.notifyCurMove = function(msg){
+    msg.curPlayer = this.curPlayer;
     this.channel.pushMessage('onMove', msg);
+};
+
+game.notifyPickingRole = function () {
+    var self = this;
+    msg = {
+        curPlayer: self.curPlayer,
+        roleList: self.roleSet.roleList
+    }
+    self.channel.pushMessage('onPickingRole', msg);
 };
 
 

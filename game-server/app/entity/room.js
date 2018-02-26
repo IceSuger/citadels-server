@@ -95,6 +95,7 @@ room.ready = function(msg){
     {
         this.game = new Game(self);
     }
+    console.log("到了room.ready，已经new了Game。");
     this.notifyRoomReadyChange();
 };
 
