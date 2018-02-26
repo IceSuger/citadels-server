@@ -82,17 +82,17 @@ coreRemote.prototype.leave = function (uid, sid, roomId, cb) {
     this.roomService.leaveRoom(uid, sid, roomId);
 
 
-    var channel = this.channelService.getChannel(name, false);
-    // leave channel
-    if (!!channel) {
-        channel.leave(uid, sid);
-    }
-    var username = uid.split('*')[0];
-    var param = {
-        route: 'onLeave',
-        user: username
-    };
-    channel.pushMessage(param);
+    // var channel = this.channelService.getChannel(name, false);
+    // // leave channel
+    // if (!!channel) {
+    //     channel.leave(uid, sid);
+    // }
+    // var username = uid.split('*')[0];
+    // var param = {
+    //     route: 'onLeave',
+    //     user: username
+    // };
+    // channel.pushMessage(param);
     cb();
 };
 

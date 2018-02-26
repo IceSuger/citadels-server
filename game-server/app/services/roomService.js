@@ -26,13 +26,13 @@ var roomService = RoomService.prototype;
  */
 roomService.createRoom = function(msg) {
     var roomId = this.curMaxRoomId + 1;
-    msg.roomId = roomId;
-    this.roomDict[roomId] = new Room(msg);
+    msg.roomId = '' + roomId; //从新建房间开始，roomId全部都用String类型。而Number只用在curMaxRoomId中，每次生成新的房间号都将房间号转成String。
+    this.roomDict[msg.roomId] = new Room(msg);
     //test
     console.log('After creating=== ');
     console.log(this.roomDict);
     this.curMaxRoomId = roomId;
-    return roomId; //或者""+roomId
+    return msg.roomId;
 };
 
 /**
@@ -72,15 +72,19 @@ roomService.enterRoom = function(msg) {
 };
 
 /**
- * TODO
- * @param msg
+ * 有用户离开房间。
+ * @param uid
+ * @param sid
+ * @param roomId
  */
 roomService.leaveRoom = function (uid, sid, roomId) {
+    console.log(typeof roomId);
     var room = this.roomDict[roomId];
     var playerCnt = room.playerLeave(uid, sid);
     if (playerCnt === 0) {
         //如果全部玩家都退出了，就干掉这个room
-        delete this.roomDict[roomId];
+        //delete this.roomDict[roomId];
+        console.log('ROOM DELETED: ' + roomId);
     }
 };
 
@@ -89,13 +93,17 @@ roomService.leaveRoom = function (uid, sid, roomId) {
  * @param msg
  */
 roomService.ready = function(msg){
+    console.log('In roomService.ready, msg is:');
+    console.log(msg);
     var room = this.roomDict[msg.roomId];
     room.ready(msg);
+    return consts.GET_READY.OK;
 };
 
 roomService.cancelReady = function (msg) {
     var room = this.roomDict[msg.roomId];
     room.cancelReady(msg);
+    return consts.GET_READY.OK;
 };
 
 roomService.pickRole = function(msg){

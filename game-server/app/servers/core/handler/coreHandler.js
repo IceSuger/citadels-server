@@ -57,14 +57,18 @@ handler.send = function(msg, session, next) {
  */
 handler.ready = function(msg, session, next){
 	msg.uid = session.uid;
-    msg.roomId = session.roomId;
+    msg.roomId = session.get('roomId');
     var ret = this.roomService.ready(msg);
-    next(ret);
+    next(null, {
+        ret: ret
+    });
 };
 
 handler.cancelReady = function (msg, session, next) {
     msg.uid = session.uid;
-    msg.roomId = session.roomId;
+    msg.roomId = session.get('roomId');
     var ret = this.roomService.cancelReady(msg);
-    next(ret);
+    next(null, {
+        ret: ret
+    });
 };

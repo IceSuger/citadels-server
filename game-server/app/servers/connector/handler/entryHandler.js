@@ -54,7 +54,6 @@ handler.enter = function(msg, session, next) {
  * @param  {Object}   msg     request message
  * @param  {Object}   session current session object
  * @param  {Function} next    next step callback, 其中将返回创建出的房间号
- * @return {Void}
  */
 handler.createRoom = function(msg, session, next) {
     var self = this;
@@ -83,7 +82,7 @@ handler.enterRoom = function(msg, session, next) {
 	msg.serverId = this.app.get('serverId');
 
     session.bind(msg.uid);
-    session.set('roomId', msg.roomId);
+    session.set('roomId', '' + msg.roomId); //session中保存字符串形式的roomId，后面访问roomDict时，key不能是Number，只能是String
     session.push('roomId', function (err) {
         if (err) {
             console.error('set roomId for session service failed! error is : %j', err.stack);
