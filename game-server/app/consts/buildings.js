@@ -195,7 +195,7 @@ var buildings = [
         id: consts.BUILDINGS.KEEP,
         cost: 3,
         color: consts.COLOR.PURPLE,
-        count: 1,
+        count: 2,
         special: true
     },
     {

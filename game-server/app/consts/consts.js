@@ -73,10 +73,10 @@ module.exports = {
         OK: 0,
         ERROR: 1
     },
-
-    GAME:{
-        NEXT_PLAYER_PICK_ROLE: 1
-    },
+    //
+    // GAME:{
+    //     NEXT_PLAYER_PICK_ROLE: 1
+    // },
 
     ACTION: {
         COINS: 1,
@@ -90,5 +90,12 @@ module.exports = {
         PICKING_ROLE: 3
     },
 
-    BANK_INIT_COINS: 300
+    BANK_INIT_COINS: 300,
+
+    CLIENT_ONLY: {
+        EVENT: {
+            PICK_ROLE: 11,
+
+        }
+    }
 };

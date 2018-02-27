@@ -4,14 +4,14 @@
 var consts = require('../consts/consts');
 
 var Player = function(data){
-    this.seatId = 0;
+    // this.seatId = 0;
     this.wxNickName = data.wxNickName;
     this.wxAvatar = data.wxAvatar;
     this.uid = data.uid;
 
     this.coins = 0;
     this.buildingDict = {}; //已建造的建筑
-    this.handCards = [];    //手牌建筑
+    this.handCards = [];    //手牌建筑，其中仅保存建筑牌的id们，允许有重复。
     this.role = consts.ROLES.NONE;
     this.hasLibrary = false;
     this.hasMagicSchool = false;
@@ -29,14 +29,15 @@ var Player = function(data){
 player = Player.prototype;
 
 player.pickRole = function(data){
-    this.role = data.pickedRole;
+    this.role = data.roleId;
 };
 
 /**
  * 增加一张指定的手牌
- * @param data
+ * @param cardId    建筑牌的id
  */
-player.addHandCard = function(data){
+player.addHandCard = function (cardId) {
+    this.handCards.push(cardId);
 
 };
 

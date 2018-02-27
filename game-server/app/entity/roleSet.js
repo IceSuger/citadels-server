@@ -8,10 +8,10 @@ var Role = function(staticRole){
     this.id = staticRole.id;
     this.color = staticRole.color;
     this.killed = false;
-    this.stolenBy = -1;
+    this.stolenBy = null;
     this.bannedAndShown = false;
     this.bannedAndHidden = false;
-    this.playerNum = -1;
+    this.uid = null;
     this.pickable = true;
 };
 
@@ -70,8 +70,8 @@ RoleSet.prototype.steal = function(roleNum, thiefPlayerNum){
     this.roleList[roleNum].stolenBy = thiefPlayerNum;
 };
 
-RoleSet.prototype.pick = function(roleNum, playerNum){
-    this.roleList[roleNum].playerNum = playerNum;
+RoleSet.prototype.pick = function (roleNum, uid) {
+    this.roleList[roleNum].playerNum = uid;
     this.roleList[roleNum].pickable = false;
 };
 

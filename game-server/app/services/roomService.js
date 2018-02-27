@@ -100,7 +100,7 @@ roomService.ready = function(msg){
     // console.log(msg);
     var room = this.roomDict[msg.roomId];
     room.ready(msg);
-    console.log('到不了这？');
+    // console.log('到不了这？');
     return consts.GET_READY.OK;
 };
 
@@ -111,26 +111,30 @@ roomService.cancelReady = function (msg) {
 };
 
 roomService.pickRole = function(msg){
-
+    var room = this.roomDict[msg.roomId];
+    room.pickRole(msg);
 };
 
 roomService.collectTaxes = function(msg){
-
+    var room = this.roomDict[msg.roomId];
 };
 
 roomService.takeCoinsOrBuildingCards = function(msg){
-
+    var room = this.roomDict[msg.roomId];
 };
 
 roomService.pickBuildingCard = function(msg){
+    var room = this.roomDict[msg.roomId];
 
 };
 
 roomService.useAbility = function(msg){
+    var room = this.roomDict[msg.roomId];
 
 };
 
 roomService.build = function(msg){
+    var room = this.roomDict[msg.roomId];
 
 };
 

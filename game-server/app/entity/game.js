@@ -15,9 +15,11 @@ var Game = function(room) {
     this.channelService = room.channelService;
     this.channel = room.channel;
     this.playerDict = room.playerDict;
-    this.playerList = [];
+    //seatMap 保存 seat 到 uid 的映射
+    this.seatMap = [];
     for (var p in self.playerDict) {
-        self.playerList.push(self.playerDict[p]);
+        self.seatMap.push(p); //self.seatMap[p]);
+        self.playerDict[p].coins = 0;
     }
 
     this.roleSet = new RoleSet();
@@ -28,6 +30,7 @@ var Game = function(room) {
         init: 'initial',
         transitions: [
             { name:'startRolePick',     from:'initial',     to:'rolePick'   },
+            // { name:'continueRolePick',  from:'rolePick',    to:'rolePick'   },
             { name:'endAllRolePick',    from:'rolePick',    to:'action'     },
             { name:'endAllAction',      from:'action',      to:'preEnd'     },
             { name:'continueGame',      from:'preEnd',      to:'rolePick'   },
@@ -36,7 +39,7 @@ var Game = function(room) {
         methods: {
             //onStartRolePick:    self.startRolePicking(),
             onRolePick:         self.startRolePicking(),
-
+            // onAction:           self.action(),
         }
     });
     this.pile = new Pile();
@@ -54,9 +57,10 @@ game.init = function(){
      *  1. 初始化建筑牌堆，洗牌
      *  1. 初始化银行
      *  2. 随机给王冠
-     *  3. 初始化各玩家全部属性，拥有的建筑、分数、金币等都清空
+     *  3. 初始化各玩家全部属性，拥有的建筑、分数、金币等都清空   //还没写这条的实现。
      *  4. 初始化各玩家金币=2
      *  5. 初始化各玩家手牌，摸4张牌
+     *  5.5 通知客户端，局势变化。
      *  6. fsm状态转换，startRolePick
      */
     var self = this;
@@ -69,7 +73,19 @@ game.init = function(){
     this.bank.reset();
 
     var i = Math.random();  //0~1 random number
-    this.crownOwner = Math.floor(i * this.totalPlayer);    //0~7 random int
+    this.crownOwner = Math.ceil(i * this.totalPlayer) - 1;    //0~7 random int
+    console.log('CROWN: ' + this.crownOwner);
+
+    console.log(this.pile.pile.length);
+    for (var uid in self.playerDict) {
+        self.takeCoins(2, uid);
+        self.drawCards(4, uid);
+    }
+    console.log(this.pile.pile.length);
+
+
+    this.notifySituation();
+
 
     // console.log("皇冠交给："+this.crownOwner);
     this.fsm.startRolePick();
@@ -139,12 +155,25 @@ game.startRolePicking = function(){
     // this.notifyOnePlayer(msg1);
 };
 
-game.takeCoins = function(count, player){
+// /**
+//  * 将curPlayer置为下一位玩家。
+//  */
+// game.playerShift = function(){
+//     this.curPlayer = (this.curPlayer + 1) % this.totalPlayer;
+// };
+
+
+game.takeCoins = function (count, uid) {
     this.bank.draw(count);
-    player.coins += count;
-}
+    this.playerDict[uid].coins += count;
+};
 
-
+game.drawCards = function (count, uid) {
+    for (var i = 0; i < count; i++) {
+        var cardId = this.pile.draw();
+        this.playerDict[uid].addHandCard(cardId);
+    }
+};
 
 /**
  * 选角色。
@@ -152,7 +181,7 @@ game.takeCoins = function(count, player){
  *  2. 记录玩家选取的角色    player.role
  *  3. 判断是否结束了选角色回合，即判断当前玩家是否为最后一个玩家：curPlayer == totalPlayer - 1
  *      是，则 fsm 状态转移，进入行动阶段
- *      否，则 curPlayer++, 返回信息，供外界 notifyNextPlayerToPick()
+ *      否，则 curPlayer++, notifyPickingRole();
  *
  * @param msg
  */
@@ -162,7 +191,9 @@ game.pickRole = function(msg){
     player.pickRole(msg);
     if (this.curPlayer !== this.totalPlayer - 1) {
         this.curPlayer++;
-        return consts.GAME.NEXT_PLAYER_PICK_ROLE;
+        // return consts.GAME.NEXT_PLAYER_PICK_ROLE;
+        this.notifyPickingRole();
+        // this.fsm.continueRolePick();
     } else {
         this.fsm.endAllRolePick();
     }
@@ -258,10 +289,6 @@ game.build = function(msg){
 
 };
 
-game.updateSituation = function(msg){
-    //this.channel.pushMessage(route,?msg,?opts,?cb);
-    this.channel.pushMessage('updateSituation', msg);
-};
 
 /**
  * 通知客户端，当前是谁在干啥。
@@ -277,9 +304,16 @@ game.notifyPickingRole = function () {
     msg = {
         curPlayer: self.curPlayer,
         roleList: self.roleSet.roleList
-    }
+    };
     self.channel.pushMessage('onPickingRole', msg);
 };
 
+game.notifySituation = function () {
+    var self = this;
+    msg = {
+        playerDict: self.playerDict
+    };
+    self.channel.pushMessage('onSituationUpdate', msg);
+};
 
 module.exports = Game;
