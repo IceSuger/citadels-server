@@ -90,12 +90,38 @@ module.exports = {
         PICKING_ROLE: 3
     },
 
+    CAN_TAKE_COIN_COUNT: {
+        NORMAL: 2
+    },
+
+    CAN_TAKE_CARD_COUNT: {
+        NORMAL: 2,
+        OBSERVATORY: 3
+    },
+
+    CAN_HAVE_CARD_COUNT: {
+        NORMAL: 1,
+        LIBRARY: 2
+    },
+
     BANK_INIT_COINS: 300,
+
+    GAME_STATE: {
+        ROLE_PICKING: 11,
+        COIN_OR_CARD: 12,
+        ABILITY: 13,
+    },
 
     CLIENT_ONLY: {
         EVENT: {
             PICK_ROLE: 11,
 
+        },
+
+        GAME_STATE: {
+            ROLE_PICKING: 11,
+            COIN_OR_CARD: 12,
+            ABILITY: 13,
         }
     }
 };

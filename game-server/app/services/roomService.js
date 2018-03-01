@@ -121,6 +121,7 @@ roomService.collectTaxes = function(msg){
 
 roomService.takeCoinsOrBuildingCards = function(msg){
     var room = this.roomDict[msg.roomId];
+    return room.takeCoinsOrBuildingCards(msg);
 };
 
 roomService.pickBuildingCard = function(msg){

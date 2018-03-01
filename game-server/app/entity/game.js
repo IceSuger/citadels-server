@@ -16,30 +16,36 @@ var Game = function(room) {
     this.channel = room.channel;
     this.playerDict = room.playerDict;
     //seatMap 保存 seat 到 uid 的映射
-    this.seatMap = [];
-    for (var p in self.playerDict) {
-        self.seatMap.push(p); //self.seatMap[p]);
-        self.playerDict[p].coins = 0;
-    }
-
+    this.seatMap = Object.keys(self.playerDict);
+    this.seatMap.forEach(function (uid, seatId, _) {
+        self.playerDict[uid].seatId = seatId;
+        // console.log(uid + ' : seatId is ' + seatId);
+    });
+    // console.log(Object.keys(self.playerDict));
+    this.curState = null;
     this.roleSet = new RoleSet();
+    this.curRole = null;
     this.pickableRoles = [];
-    this.crownOwner = 0;
+    this.crownSeatId = 0;
     this.gameOver = false;
     this.fsm = new StateMachine({
         init: 'initial',
         transitions: [
             { name:'startRolePick',     from:'initial',     to:'rolePick'   },
             // { name:'continueRolePick',  from:'rolePick',    to:'rolePick'   },
-            { name:'endAllRolePick',    from:'rolePick',    to:'action'     },
-            { name:'endAllAction',      from:'action',      to:'preEnd'     },
+            {name: 'endAllRolePick', from: 'rolePick', to: 'actionTaking'},
+            //可能不能自己转换到自己，比如下面这个操作，就总是出错。
+            // { name:'continueAction',    from:'actionTaking',      to:'actionTaking'     },
+            {name: 'endAllAction', from: 'actionTaking', to: 'preEnd'},
             { name:'continueGame',      from:'preEnd',      to:'rolePick'   },
             { name:'endGame',           from:'preEnd',      to:'end'}
         ],
         methods: {
             //onStartRolePick:    self.startRolePicking(),
-            onRolePick:         self.startRolePicking(),
+            onRolePick: self.startRolePicking,
             // onAction:           self.action(),
+            onLeaveRolePick: self.startAction,
+            onActionTaking: self.nextRoleAction
         }
     });
     this.pile = new Pile();
@@ -69,12 +75,11 @@ game.init = function(){
     // console.log("AFTER fsm.init");
 
     this.pile.reset();
-
     this.bank.reset();
 
     var i = Math.random();  //0~1 random number
-    this.crownOwner = Math.ceil(i * this.totalPlayer) - 1;    //0~7 random int
-    console.log('CROWN: ' + this.crownOwner);
+    this.crownSeatId = Math.ceil(i * this.totalPlayer) - 1;    //0~7 random int
+    console.log('CROWN: ' + this.crownSeatId);
 
     console.log(this.pile.pile.length);
     for (var uid in self.playerDict) {
@@ -87,15 +92,17 @@ game.init = function(){
     this.notifySituation();
 
 
-    // console.log("皇冠交给："+this.crownOwner);
-    this.fsm.startRolePick();
+    // console.log("皇冠交给："+this.crownSeatId);
+    this.fsm.startRolePick(self);
     // console.log(this.fsm.state);
     // console.log("Game init 最后一行。");
 };
 
 
-game.startRolePicking = function(){
+game.startRolePicking = function (_, self) {
     /**
+     * 先将roleSet.reset()；
+     *
      * 两步走：
      * 1. 扣1张牌：
      *      无论如何，都先扣1张，随机的。
@@ -112,7 +119,7 @@ game.startRolePicking = function(){
      *      如果 core.totalPlayer == 7：
      *          翻开 0 张。
      *
-     * 3. 指定 core.curPlayer = crownOwner
+     * 3. 指定 core.curPlayer = crownSeatId
      *
      * 4. 想 channel 发出由 curPlayer 开始选角色的通知；
      * 5. 向 curPlayer 发出可选角色列表；
@@ -124,50 +131,91 @@ game.startRolePicking = function(){
      *  notifyAll;
      *  notifyPlayer;
      */
-    var roleSetSize = this.roleSet.roleList.length;
-    // if (this.totalPlayer === roleSetSize - 1) {
-    this.roleSet.banAndHide();  //无论几个人玩，都是先扣一张牌。
-    // }
+    // console.log(self);
+    self.curState = consts.GAME_STATE.ROLE_PICKING;
+    self.notifyGameStateChange();
+    self.roleSet.reset();
+    var roleSetSize = self.roleSet.roleList.length;
+    self.roleSet.banAndHide();  //无论几个人玩，都是先扣一张牌。
 
-    // if(this.totalPlayer >= 4 && this.totalPlayer <= 6)
+    // if(self.totalPlayer >= 4 && this.totalPlayer <= 6)
     // {
-    //     this.roleSet.banAndShowMany( roleSetSize - 1 - (this.totalPlayer + 1) - 1 );
+    //     self.roleSet.banAndShowMany( roleSetSize - 1 - (this.totalPlayer + 1) - 1 );
     // }
     //用2人测试一下。
-    this.roleSet.banAndShowMany(roleSetSize - 1 - (this.totalPlayer + 1) - 1);
+    self.roleSet.banAndShowMany(roleSetSize - 1 - (self.totalPlayer + 1) - 1);
 
-    this.curPlayer = this.crownOwner;
+    self.curPlayer = self.crownSeatId;
 
-    // var msg = {
-    //     move: consts.MOVE.PICKING_ROLE,
-    //     crownOwner: this.crownOwner,
-    //     banShowList: this.roleSet.bannedAndShownList
-    // };
-    // this.notifyCurMove(msg);
-    this.notifyPickingRole();
+    self.notifyPickingRole();
 
     // //todo Alpha版暂时向客户端发送完整角色列表和完整局势，正式版再考虑只发给每个客户端其可知部分。
-    // // this.channelService.pushMessageByUids();
-    // var msg1 = {
-    //     pickableRoles: this.pickableRoles,
-    //
-    // }
-    // this.notifyOnePlayer(msg1);
+    // // self.channelService.pushMessageByUids();
 };
 
-// /**
-//  * 将curPlayer置为下一位玩家。
-//  */
-// game.playerShift = function(){
-//     this.curPlayer = (this.curPlayer + 1) % this.totalPlayer;
-// };
 
+/**
+ * 开始行动回合。
+ *
+ * curRole = 0;
+ */
+game.startAction = function (_, self) {
+    self.curRole = 0;
+    self.curState = consts.GAME_STATE.COIN_OR_CARD;
+    self.notifyGameStateChange();
+    console.log('开始行动回合');
+};
 
+/**
+ * curRole++;
+ * 检查是否已遍历全部角色 curRole == roleSet.roleList.length - 1
+ *  是，则fsm状态转移，函数返回；
+ *  否，则进入下面的逻辑：
+ * 检查当前角色是否有玩家可操作：
+ *  当前角色 curRoleObj = roleSet.roleList[curRole];
+ *  curRoleObj.uid 是否不为空，且 curRoleObj.killed == false
+ *      若满足，则有玩家，则通知客户端 notifyTakingAction();
+ *      若不满足，则直接结束当前角色的回合 fsm.nextRoleAction();
+ */
+game.nextRoleAction = function (_, self) {
+    // var self = this;
+    self.curRole++;
+    console.log(self.curRole + '号角色开始行动回合！');
+    if (self.curRole === self.roleSet.roleList.length) {
+        // fsm.转移
+        console.log('所有角色本回合结束。');
+        // self.fsm.
+        return;
+    }
+    var curRoleObj = self.roleSet.roleList[self.curRole];
+    console.log(curRoleObj);
+    if (curRoleObj.seatId !== null && !curRoleObj.killed) {
+        console.log('该角色可被操控。');
+        self.notifyTakingAction();
+        console.log('通知客户端们。');
+    } else {
+        console.log('该角色不可操控，换下一个。');
+        var _self = self;
+        // self.fsm.continueAction(null);
+        self.nextRoleAction(null, self);
+    }
+};
+
+/**
+ * 玩家 uid 从银行拿走 count 个金币。
+ * @param count
+ * @param uid
+ */
 game.takeCoins = function (count, uid) {
     this.bank.draw(count);
-    this.playerDict[uid].coins += count;
+    this.playerDict[uid].coins += Number(count);
 };
 
+/**
+ * 玩家 uid 从牌堆顶部摸取 count 张建筑牌。
+ * @param count
+ * @param uid
+ */
 game.drawCards = function (count, uid) {
     for (var i = 0; i < count; i++) {
         var cardId = this.pile.draw();
@@ -186,8 +234,9 @@ game.drawCards = function (count, uid) {
  * @param msg
  */
 game.pickRole = function(msg){
-    this.roleSet.pick(msg.roleId, msg.uid);
-    var player = this.playerDict[msg.uid];
+    this.roleSet.pick(msg.roleId, msg.seatId);
+    var uid = this.seatMap[msg.seatId];
+    var player = this.playerDict[uid];
     player.pickRole(msg);
     if (this.curPlayer !== this.totalPlayer - 1) {
         this.curPlayer++;
@@ -195,7 +244,9 @@ game.pickRole = function(msg){
         this.notifyPickingRole();
         // this.fsm.continueRolePick();
     } else {
-        this.fsm.endAllRolePick();
+        var self = this;
+        console.log('全部玩家已选好角色。');
+        this.fsm.endAllRolePick(self);
     }
 };
 
@@ -229,36 +280,37 @@ game.collectTaxes = function(msg){
 game.takeCoinsOrBuildingCards = function(msg){
     var self = this;
     var player = this.playerDict[msg.uid];
-    if (msg.take === consts.ACTION.COINS) {
-        this.bank.draw(2);
-        player.coins += 2;
+    if (msg.move === consts.MOVE.TAKE_COINS) {
+        self.takeCoins(consts.CAN_TAKE_COIN_COUNT.NORMAL, msg.uid);
+        self.notifySituation();
     } else {
-        //todo 通知场上，当前玩家选择拿建筑
+        //通知场上，当前玩家选择拿建筑
         var pushMsg = {
-            uidTakingMove: msg.uid,
+            // uidTakingMove: msg.uid,
             move: consts.MOVE.TAKE_BUILDING_CARDS
-        }
+        };
         this.notifyCurMove(pushMsg);    //this.channel.pushMessage('onMove', pushMsg);
         //判断给丫返回几张建筑牌
-        var count = 2;
+        var count = consts.CAN_TAKE_CARD_COUNT.NORMAL;
         if(player.hasObservatory){
-            count = 3;
+            count = consts.CAN_TAKE_CARD_COUNT.OBSERVATORY;
         }
         var buildingCards4Picking = [];
         for(var i=0; i<count; i++){
             buildingCards4Picking.push(self.pile.draw());
         }
-        //todo 发回候选建筑牌列表
-        //pushMessageByUids(route,?msg,?uids,?opts,?cb)
-        var tuid = msg.uid;
-        var tsid = self.channel.getMember(tuid)['sid'];
-        var msg2Send = {
-            candidates: buildingCards4Picking
-        };
-        this.channelService.pushMessageByUids('buildingCandidates', msg2Send, [{
-            uid: tuid,
-            sid: tsid
-        }]);
+        //发回候选建筑牌列表
+        // //pushMessageByUids(route,?msg,?uids,?opts,?cb)
+        // var tuid = msg.uid;
+        // var tsid = self.channel.getMember(tuid)['sid'];
+        // var msg2Send = {
+        //     candidates: buildingCards4Picking
+        // };
+        // this.channelService.pushMessageByUids('buildingCandidates', msg2Send, [{
+        //     uid: tuid,
+        //     sid: tsid
+        // }]);
+        return buildingCards4Picking;
     }
 };
 
@@ -301,19 +353,52 @@ game.notifyCurMove = function(msg){
 
 game.notifyPickingRole = function () {
     var self = this;
-    msg = {
+    var msg = {
         curPlayer: self.curPlayer,
         roleList: self.roleSet.roleList
     };
     self.channel.pushMessage('onPickingRole', msg);
 };
 
+/**
+ * 角色开始行动回合，即选择拿金币/建筑牌。
+ * 根据有没有天文台、图书馆判断可拿几张建筑牌、可保留几张建筑牌。
+ */
+game.notifyTakingAction = function () {
+    var self = this;
+    var curPlayerObj = self.roleSet.roleList[self.curRole];
+    var canTakeCoinCnt = consts.CAN_TAKE_COIN_COUNT.NORMAL;
+    var canTakeCardCnt = consts.CAN_TAKE_CARD_COUNT.NORMAL;
+    var canHaveCardCnt = consts.CAN_HAVE_CARD_COUNT.NORMAL;
+    if (curPlayerObj.hasLibrary) {
+        canHaveCardCnt = consts.CAN_HAVE_CARD_COUNT.LIBRARY;
+    }
+    if (curPlayerObj.hasObservatory) {
+        canTakeCardCnt = consts.CAN_TAKE_CARD_COUNT.OBSERVATORY;
+    }
+    var msg = {
+        curPlayer: curPlayerObj.seatId,
+        roleId: self.curRole,
+        canTakeCoinCnt: canTakeCoinCnt,
+        canTakeCardCnt: canTakeCardCnt,
+        canHaveCardCnt: canHaveCardCnt
+    };
+    self.channel.pushMessage('onTakingAction', msg);
+};
+
 game.notifySituation = function () {
     var self = this;
-    msg = {
+    var msg = {
         playerDict: self.playerDict
     };
     self.channel.pushMessage('onSituationUpdate', msg);
 };
 
+game.notifyGameStateChange = function () {
+    var self = this;
+    var msg = {
+        curState: self.curState
+    };
+    self.channel.pushMessage('onGameStateChange', msg);
+};
 module.exports = Game;

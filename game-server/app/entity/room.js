@@ -117,7 +117,7 @@ room.collectTaxes = function(msg){
 
 room.takeCoinsOrBuildingCards = function(msg){
     var game = this.game;
-    game.takeCoinsOrBuildingCards(msg);
+    return game.takeCoinsOrBuildingCards(msg);
 };
 
 room.pickBuildingCard = function(msg){

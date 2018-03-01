@@ -11,7 +11,7 @@ var Role = function(staticRole){
     this.stolenBy = null;
     this.bannedAndShown = false;
     this.bannedAndHidden = false;
-    this.uid = null;
+    this.seatId = null;//玩家的座次
     this.pickable = true;
 };
 
@@ -70,8 +70,8 @@ RoleSet.prototype.steal = function(roleNum, thiefPlayerNum){
     this.roleList[roleNum].stolenBy = thiefPlayerNum;
 };
 
-RoleSet.prototype.pick = function (roleNum, uid) {
-    this.roleList[roleNum].playerNum = uid;
+RoleSet.prototype.pick = function (roleNum, seatId) {
+    this.roleList[roleNum].seatId = seatId;
     this.roleList[roleNum].pickable = false;
 };
 

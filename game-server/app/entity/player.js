@@ -4,7 +4,7 @@
 var consts = require('../consts/consts');
 
 var Player = function(data){
-    // this.seatId = 0;
+    this.seatId = null;
     this.wxNickName = data.wxNickName;
     this.wxAvatar = data.wxAvatar;
     this.uid = data.uid;
