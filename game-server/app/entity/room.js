@@ -135,4 +135,9 @@ room.build = function(msg){
     game.build(msg);
 };
 
+room.endRound = function (msg) {
+    var game = this.game;
+    game.endRound(msg);
+};
+
 module.exports = Room;

@@ -36,6 +36,7 @@ var Game = function(room) {
             // { name:'continueRolePick',  from:'rolePick',    to:'rolePick'   },
             {name: 'endAllRolePick', from: 'rolePick', to: 'actionTaking'},
             //可能不能自己转换到自己，比如下面这个操作，就总是出错。
+            //【补充】不是的。是因为在转换状态的过程中，不能进行新的状态转换操作！
             // { name:'continueAction',    from:'actionTaking',      to:'actionTaking'     },
             {name: 'endAllAction', from: 'actionTaking', to: 'preEnd'},
             { name:'continueGame',      from:'preEnd',      to:'rolePick'   },
@@ -46,7 +47,10 @@ var Game = function(room) {
             onRolePick: self.startRolePicking,
             // onAction:           self.action(),
             onLeaveRolePick: self.startAction,
-            onActionTaking: self.nextRoleAction
+            onEndAllRolePick: self.nextRoleAction,
+            // onActionTaking: self.nextRoleAction,
+            onEndAllAction: self.checkGameOver
+            // onPreEnd: self.checkGameOver
         }
     });
     this.pile = new Pile();
@@ -185,7 +189,7 @@ game.nextRoleAction = function (_, self) {
     if (self.curRole === self.roleSet.roleList.length) {
         // fsm.转移
         console.log('所有角色本回合结束。');
-        // self.fsm.
+        self.fsm.endAllAction(self);
         return;
     }
     var curRoleObj = self.roleSet.roleList[self.curRole];
@@ -201,6 +205,16 @@ game.nextRoleAction = function (_, self) {
         var _self = self;
         // self.fsm.continueAction(null);
         self.nextRoleAction(null, self);
+    }
+};
+
+game.checkGameOver = function (_, self) {
+    if (self.gameOver) {
+        // self.fsm.
+    } else {
+        setTimeout(function () {
+            self.fsm.continueGame(self);
+        });
     }
 };
 
@@ -482,6 +496,10 @@ game.build = function(msg){
     this.notifySituation();
 };
 
+game.endRound = function (msg) {
+    var self = this;
+    self.nextRoleAction(null, self);
+};
 
 /**
  * 通知客户端，当前是谁在干啥。

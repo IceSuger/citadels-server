@@ -119,6 +119,7 @@ roomService.pickRole = function(msg){
 
 roomService.collectTaxes = function(msg){
     var room = this.roomDict[msg.roomId];
+    room.collectTaxes(msg);
 };
 
 roomService.takeCoinsOrBuildingCards = function(msg){
@@ -138,7 +139,12 @@ roomService.useAbility = function(msg){
 
 roomService.build = function(msg){
     var room = this.roomDict[msg.roomId];
+    room.build(msg);
+};
 
+roomService.endRound = function (msg) {
+    var room = this.roomDict[msg.roomId];
+    room.endRound(msg);
 };
 
 
