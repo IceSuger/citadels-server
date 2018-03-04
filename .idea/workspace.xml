@@ -1,18 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6b20a03c-1453-4521-a035-3fb9f45e0d19" name="Default" comment="">
+    <list default="true" id="6b20a03c-1453-4521-a035-3fb9f45e0d19" name="Default" comment="v0.0.9 刺客、盗贼可发动技能；服务端已经可以处理刺客、盗贼、魔术师、军阀的主动技能及建造建筑的逻辑。">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/consts/buildings.js" afterPath="$PROJECT_DIR$/game-server/app/consts/buildings.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/consts/consts.js" afterPath="$PROJECT_DIR$/game-server/app/consts/consts.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/entity/game.js" afterPath="$PROJECT_DIR$/game-server/app/entity/game.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/entity/pile.js" afterPath="$PROJECT_DIR$/game-server/app/entity/pile.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/entity/player.js" afterPath="$PROJECT_DIR$/game-server/app/entity/player.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/entity/roleSet.js" afterPath="$PROJECT_DIR$/game-server/app/entity/roleSet.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/servers/connector/handler/entryHandler.js" afterPath="$PROJECT_DIR$/game-server/app/servers/connector/handler/entryHandler.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js" afterPath="$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/servers/core/remote/coreRemote.js" afterPath="$PROJECT_DIR$/game-server/app/servers/core/remote/coreRemote.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/services/roomService.js" afterPath="$PROJECT_DIR$/game-server/app/services/roomService.js" />
     </list>
     <ignored path="citadels-server.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -477,7 +467,7 @@
       <workItem from="1519532172582" duration="4828000" />
       <workItem from="1519541957066" duration="69950000" />
       <workItem from="1519744619530" duration="17284000" />
-      <workItem from="1519892687035" duration="26932000" />
+      <workItem from="1519892687035" duration="27040000" />
     </task>
     <task id="LOCAL-00001" summary="1. 多人进入房间可用，但可能还有bug；&#10;2. 离开房间或断开连接，将从room中删除player，但可能还有bug；&#10;3. 玩家准备和取消准备，还未测试，可能有bug。">
       <created>1519571699091</created>
@@ -521,11 +511,18 @@
       <option name="project" value="LOCAL" />
       <updated>1519906745569</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="v0.0.9 刺客、盗贼可发动技能；服务端已经可以处理刺客、盗贼、魔术师、军阀的主动技能及建造建筑的逻辑。">
+      <created>1520172965961</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1520172965961</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="120800000" />
+    <option name="totallyTimeSpent" value="120908000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1015" extended-state="6" />
@@ -534,7 +531,7 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13072917" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32963374" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32741398" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -574,7 +571,8 @@
     <MESSAGE value="房间玩家全部准备后，将新建一局游戏。可向房间广播当前可选角色列表。（后期正式版将改为仅将玩家可知信息发送给相应玩家。）" />
     <MESSAGE value="轮流选角色直至结束选角色回合，已可以正常工作。" />
     <MESSAGE value=" v0.0.7.1 【修复bug】上个版本中，进入行动回合时玩家身份可显示，但situationUpdate后，身份将被“未知”覆盖。" />
-    <option name="LAST_COMMIT_MESSAGE" value=" v0.0.7.1 【修复bug】上个版本中，进入行动回合时玩家身份可显示，但situationUpdate后，身份将被“未知”覆盖。" />
+    <MESSAGE value="v0.0.9 刺客、盗贼可发动技能；服务端已经可以处理刺客、盗贼、魔术师、军阀的主动技能及建造建筑的逻辑。" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.0.9 刺客、盗贼可发动技能；服务端已经可以处理刺客、盗贼、魔术师、军阀的主动技能及建造建筑的逻辑。" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
