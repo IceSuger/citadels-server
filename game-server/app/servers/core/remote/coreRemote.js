@@ -111,6 +111,6 @@ coreRemote.prototype.createRoom = function (msg, cb) {
 };
 
 coreRemote.prototype.enterRoom = function (msg, cb) {
-    var code = this.roomService.enterRoom(msg);
-    cb(code);
+    var retmsg = this.roomService.enterRoom(msg);
+    cb(retmsg);
 };

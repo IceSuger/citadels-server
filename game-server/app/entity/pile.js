@@ -64,4 +64,11 @@ pile.append = function(cardId){
     this.pile.push(cardId);
 };
 
+pile.appendMany = function (list) {
+    var self = this;
+    list.forEach(function (value) {
+        self.append(value);
+    })
+};
+
 module.exports = Pile;

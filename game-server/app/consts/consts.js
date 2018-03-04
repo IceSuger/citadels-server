@@ -106,6 +106,8 @@ module.exports = {
 
     BANK_INIT_COINS: 300,
 
+    DEFAULT_GAME_OVER_BUILDING_COUNT: 8,
+
     GAME_STATE: {
         ROLE_PICKING: 11,
         COIN_OR_CARD: 12,
@@ -118,10 +120,8 @@ module.exports = {
 
         },
 
-        GAME_STATE: {
-            ROLE_PICKING: 11,
-            COIN_OR_CARD: 12,
-            ABILITY: 13,
+        ERROR: {
+            INVALID_TARGET: 11,
         }
     }
 };

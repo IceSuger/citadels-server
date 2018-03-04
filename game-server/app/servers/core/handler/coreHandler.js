@@ -93,6 +93,20 @@ handler.takeCoinsOrBuildingCards = function (msg, session, next) {
     }
 };
 
+handler.pickBuildingCard = function (msg, session, next) {
+    msg.uid = session.uid;
+    msg.roomId = session.get('roomId');
+    this.roomService.pickBuildingCard(msg);
+    next();
+};
+
+handler.useAbility = function (msg, session, next) {
+    msg.uid = session.uid;
+    msg.roomId = session.get('roomId');
+    this.roomService.useAbility(msg);
+    next();
+};
+
 handler.collectTaxes = function (msg, session, next) {
     msg.uid = session.uid;
     msg.roomId = session.get('roomId');

@@ -3,7 +3,7 @@
  */
 var consts = require('../consts/consts');
 
-var buildings = [
+var buildingsInfo = [
     {
         id: consts.BUILDINGS.CASTLE,
         cost: 4,
@@ -207,6 +207,9 @@ var buildings = [
     }
 ];
 
-
+var buildings = [];
+buildingsInfo.forEach(function (card) {
+    buildings[card.id] = card;
+});
 
 module.exports = buildings;

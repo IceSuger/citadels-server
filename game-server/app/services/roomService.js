@@ -52,23 +52,25 @@ roomService.createRoom = function(msg) {
  */
 roomService.enterRoom = function(msg) {
     var room = this.roomDict[msg.roomId];
-    //test
-    console.log(msg);
-    console.log('After entering===');
-    console.log(this.roomDict);
+    // console.log(msg);
+    // console.log('After entering===');
+    // console.log(this.roomDict);
+    var code;
     if(!room){
-        return consts.ENTER_ROOM.ERROR_ROOM_NOT_EXIST;
+        code = consts.ENTER_ROOM.ERROR_ROOM_NOT_EXIST;
+    } else if (msg.passwd !== room.passwd) {
+        code = consts.ENTER_ROOM.ERROR_WRONG_ROOM_PASSWD;
+    } else if (room.totalPlayer === room.playerCnt) {
+        code = consts.ENTER_ROOM.ERROR_ROOM_FULL;
+    } else {
+        room.playerEnter(msg);
+        code = consts.ENTER_ROOM.OK;
     }
-    if (msg.passwd !== room.passwd)
-    {
-        return consts.ENTER_ROOM.ERROR_WRONG_ROOM_PASSWD;
-    }
-    if (room.totalPlayer === room.playerCnt)
-    {
-        return consts.ENTER_ROOM.ERROR_ROOM_FULL;
-    }
-    room.playerEnter(msg);
-    return consts.ENTER_ROOM.OK;
+    var retmsg = {
+        code: code,
+        roomMemberMax: room.totalPlayer
+    };
+    return retmsg;
 };
 
 /**
@@ -126,12 +128,12 @@ roomService.takeCoinsOrBuildingCards = function(msg){
 
 roomService.pickBuildingCard = function(msg){
     var room = this.roomDict[msg.roomId];
-
+    room.pickBuildingCard(msg);
 };
 
 roomService.useAbility = function(msg){
     var room = this.roomDict[msg.roomId];
-
+    room.useAbility(msg);
 };
 
 roomService.build = function(msg){

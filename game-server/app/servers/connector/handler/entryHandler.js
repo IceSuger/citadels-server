@@ -93,7 +93,7 @@ handler.enterRoom = function(msg, session, next) {
     // put player into room
     this.app.rpc.core.coreRemote.enterRoom(session, msg, function (data) {
         next(null, {
-            code: data
+            retmsg: data
         })
 	});
 };

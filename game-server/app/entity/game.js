@@ -6,6 +6,7 @@ var consts = require('../consts/consts');
 var RoleSet = require('./roleSet');
 var Pile = require('./pile');
 var Bank = require('./bank');
+var buildings = require('../consts/buildings');
 
 var Game = function(room) {
     var self = this;
@@ -115,7 +116,7 @@ game.startRolePicking = function (_, self) {
      *      如果 core.totalPlayer >= 4 且 <=6 :
      *      目的是，留下比玩家数多1的可选牌数。
      *      翻开的不可选的角色数：（下面代码真正实现时，翻开的不可选的牌要再-1张，因为roleList[0]是空的，只占个位置，则roleList实际上多了一个元素）
-         *      roleSet.size - (core.totalPlayer + 1) -1
+     *      roleSet.size - (core.totalPlayer + 1) -1
      *      如果 core.totalPlayer == 7：
      *          翻开 0 张。
      *
@@ -190,11 +191,13 @@ game.nextRoleAction = function (_, self) {
     var curRoleObj = self.roleSet.roleList[self.curRole];
     console.log(curRoleObj);
     if (curRoleObj.seatId !== null && !curRoleObj.killed) {
-        console.log('该角色可被操控。');
+        // console.log('该角色可被操控。');
+        self.curPlayer = curRoleObj.seatId;
+        self.abilityEffectBeforeAction();
         self.notifyTakingAction();
-        console.log('通知客户端们。');
+        // console.log('通知客户端们。');
     } else {
-        console.log('该角色不可操控，换下一个。');
+        // console.log('该角色不可操控，换下一个。');
         var _self = self;
         // self.fsm.continueAction(null);
         self.nextRoleAction(null, self);
@@ -331,14 +334,152 @@ game.pickBuildingCard = function(msg){
     msg.notPickedList.forEach(function(value, index, array){
         self.pile.append(value)
     });
+    self.notifySituation();
 };
 
+/**
+ * 玩家使用了角色主动技能：
+ * 1. 刺客
+ *  目标角色
+ * 2. 盗贼
+ *  目标角色
+ * 3. 魔术师
+ *  目标玩家/目标为系统
+ * 4. 军阀
+ *  目标玩家
+ * @param msg
+ */
 game.useAbility = function(msg){
+    // msg.targetRoleId;
+    // msg.targetSeatId;
+    // msg.targetIsSystem;
+    // msg.uid;
+    var self = this;
+    var sourcePlayer = self.playerDict[msg.uid];
+    var targetPlayer = null;
+    var targetRole = null;
+    if (msg.targetRoleId) {
+        // targetPlayer = self.playerDict[self.seatMap[self.roleSet.roleList[msg.targetRoleId].seatId]];
+        targetRole = self.roleSet.roleList[msg.targetRoleId];
+    } else if (msg.targetSeatId) {
+        targetPlayer = self.playerDict[self.seatMap[msg.targetSeatId]];
+    }
 
+    if (sourcePlayer.role === consts.ROLES.ASSASSIN) {
+        //刺客：目标角色被标记为killed
+        targetRole.killed = true;
+        // self.kill()
+    } else if (sourcePlayer.role === consts.ROLES.THIEF) {
+        //盗贼：目标角色 stolenBy 被赋值
+        targetRole.stolenBy = msg.uid;
+    } else if (sourcePlayer.role === consts.ROLES.MAGICIAN) {
+        //魔术师：
+        if (msg.targetRoleId) {
+            //  目标为玩家，则交换 sourcePlayer 和 targetPlayer 的手牌
+            var tmp = [];
+            sourcePlayer.handCards.forEach(function (value) {
+                tmp.push(value);
+            });
+            sourcePlayer.handCards = [];
+            targetPlayer.handCards.forEach(function (value) {
+                sourcePlayer.handCards.push(value);
+            });
+            targetPlayer.handCards = [];
+            tmp.forEach(function (value) {
+                targetPlayer.handCards.push(value);
+            });
+        } else {
+            //  目标为系统，则将 discardCards[] 塞到pile底部，从手牌里删掉 discardCards，再给他起等数量张牌
+            self.pile.appendMany(msg.discardCards);
+            // sourcePlayer.handCards = [];
+            msg.discardCards.forEach(function (value) {
+                sourcePlayer.spendHandCard(value);
+            });
+            for (var i = 0; i < msg.discardCards.length; i++) {
+                sourcePlayer.handCards.push(self.pile.draw());
+            }
+        }
+    } else if (sourcePlayer.role === consts.ROLES.WARLORD) {
+        //军阀：
+        self.demolish(msg);
+    }
+
+    this.notifySituation();
 };
 
-game.build = function(msg){
+/**
+ * 军阀摧毁建筑：
+ *  在客户端判断：目标是否为主教、目标建筑是否为堡垒、目标玩家是否有长城（判断军阀金币够不够用）
+ *  到了服务端，就直接执行拆除建筑了，不再判断合法性。
+ *
+ *  msg.targetSeatId
+ *  msg.uid
+ *  msg.targetBuilding
+ *  msg.demolishCost    军阀要交出的金币数
+ *
+ *  1.将要拆的建筑塞进pile
+ *  2.从targetPlayer手中删除建筑
+ *  3.从sourcePlayer手中删除金币
+ *  4.银行增加金币
+ *
+ * @param msg
+ */
+game.demolish = function (msg) {
+    var self = this;
+    var targetPlayer = self.playerDict[self.seatMap[msg.targetSeatId]];
+    var sourcePlayer = self.playerDict[msg.uid];
 
+    //1.
+    self.pile.append(msg.targetBuilding);
+    //2.
+    targetPlayer.demolishBuilding(msg.targetBuilding);
+    //3.
+    sourcePlayer.coins -= msg.demolishCost;
+    //4.
+    self.bank.coins += msg.demolishCost;
+};
+
+/**
+ * 检查当前行动玩家是否被偷。是则转走金币。
+ */
+game.abilityEffectBeforeAction = function () {
+    var self = this;
+    var curPlayerObj = self.playerDict[self.seatMap[self.curPlayer]];
+    var curRoleObj = self.roleSet.roleList[self.curRole];
+    if (curRoleObj.stolenBy !== null) {
+        self.playerDict[curRoleObj.stolenBy].coins += curPlayerObj.coins;
+        curPlayerObj.coins = 0;
+    }
+};
+
+/**
+ * 客户端完成判断：是否已有相同建筑、金币是否足够
+ * 到服务器了就直接执行建筑逻辑，不再判断合法性。
+ *
+ * msg.cardId
+ *
+ * 1. player.build
+ * 2. bank.coins+
+ *
+ * 3. 判断是否已经建满，游戏是否在本轮结束
+ *
+ * 4. notifySituation
+ *
+ * @param msg
+ */
+game.build = function(msg){
+    var self = this;
+    //1. 2.
+    var playerObj = this.playerDict[msg.uid];
+    playerObj.build(msg.cardId);
+    var cost = buildings[msg.cardId].cost;
+    this.bank.coins += cost;
+    //3.
+    if (Object.keys(playerObj.buildingDict).length >= self.gameOverBuildingCnt) {
+        self.gameOver = true;
+    }
+    //4.
+    this.notifySituation();
 };
 
 
