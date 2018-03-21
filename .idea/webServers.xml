@@ -18,6 +18,14 @@
           <option name="port" value="22" />
         </fileTransfer>
       </webServer>
+      <webServer id="0b7b484d-c535-48ff-96c2-e4ed4947eef8" name="绕道cg服务器到aliyun" url="http://localhost">
+        <fileTransfer host="localhost" port="16723" rootFolder="/home/xiaoyl/code" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="16723" />
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

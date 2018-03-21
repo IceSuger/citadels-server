@@ -91,12 +91,14 @@ module.exports = {
     },
 
     CAN_TAKE_COIN_COUNT: {
-        NORMAL: 2
+        NORMAL: 2,
+        MERCHANT: 1
     },
 
     CAN_TAKE_CARD_COUNT: {
         NORMAL: 2,
-        OBSERVATORY: 3
+        OBSERVATORY: 3,
+        ARCHITECT: 2
     },
 
     CAN_HAVE_CARD_COUNT: {

@@ -3,6 +3,7 @@
  */
 var consts = require('../consts/consts');
 var buildings = require('../consts/buildings');
+// var roleSet = require('./roleSet');
 
 Array.prototype.removeByValue = function (val) {
     for (var i = 0; i < this.length; i++) {
@@ -83,6 +84,32 @@ player.build = function (cardId) {
  */
 player.demolishBuilding = function (cardId) {
     delete this.buildingDict["" + cardId];
+};
+
+/**
+ * 遍历已有建筑，判断颜色是否相等。相等则coins+1.
+ */
+player.collectTaxes = function (myColor) {
+    var self = this;
+    // var myColor = roleSet.roleList[player.role].color;
+    // console.log(buildings[cardId]);
+    console.log(myColor);
+    if (myColor !== consts.COLOR.NONE) {
+        // console.log('我有颜色。');
+        // console.log(self.buildingDict);
+        for (cardId in self.buildingDict) {
+            // console.log(cardId);
+            // console.log(buildings[cardId]);
+            // console.log(myColor);
+            if (self.buildingDict.hasOwnProperty(cardId)) {
+                if (buildings[cardId].color === myColor) {
+                    // console.log(buildings[cardId]);
+                    // console.log(myColor);
+                    self.coins++;
+                }
+            }
+        }
+    }
 };
 
 module.exports = Player;

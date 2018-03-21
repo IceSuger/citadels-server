@@ -282,20 +282,7 @@ game.pickRole = function(msg){
     }
 };
 
-/**
- * 玩家收税。
- * 根据 uid，从playerDict中找玩家，遍历其场上建筑，判断颜色与玩家当前角色颜色是否相等，是则累加1.
- * player.coins += taxes
- *
- * 完成后，通知客户端更新场上局势 updateSituation
- * @param msg
- */
-game.collectTaxes = function(msg){
-    msg_content = {
-        uid: 1,
 
-    }
-};
 
 /**
  * 如果玩家选择拿金币，就从银行取俩，同时给玩家；
@@ -304,6 +291,7 @@ game.collectTaxes = function(msg){
  *      若玩家场上有天文台，则拿建筑牌时可以可以3选1；
  *
  * 判断玩家身份是否为商人，是则再多拿1金币；
+ * 判断玩家身份是否为建筑师，是则多拿2张牌；
  *
  * 通知客户端更新场上局势 updateSituation
  *
@@ -312,6 +300,16 @@ game.collectTaxes = function(msg){
 game.takeCoinsOrBuildingCards = function(msg){
     var self = this;
     var player = this.playerDict[msg.uid];
+    //若是商人，先多给1金币
+    if (player.role === consts.ROLES.MERCHANT) {
+        self.takeCoins(consts.CAN_TAKE_COIN_COUNT.MERCHANT, msg.uid);
+    }
+    //若是建筑师，先多给2张牌
+    if (player.role === consts.ROLES.ARCHITECT) {
+        for (var j = 0; j < consts.CAN_TAKE_CARD_COUNT.ARCHITECT; j++) {
+            player.addHandCard(self.pile.draw());
+        }
+    }
     if (msg.move === consts.MOVE.TAKE_COINS) {
         self.takeCoins(consts.CAN_TAKE_COIN_COUNT.NORMAL, msg.uid);
         self.notifySituation();
@@ -509,6 +507,23 @@ game.build = function(msg){
         self.gameOver = true;
     }
     //4.
+    this.notifySituation();
+};
+
+/**
+ * 玩家收税。
+ * 根据 uid，从playerDict中找玩家，遍历其场上建筑，判断颜色与玩家当前角色颜色是否相等，是则累加1.
+ * player.coins += taxes
+ *
+ * 完成后，通知客户端更新场上局势 updateSituation
+ * @param msg
+ */
+game.collectTaxes = function (msg) {
+    var self = this;
+    var playerObj = this.playerDict[msg.uid];
+    var myColor = this.roleSet.roleList[playerObj.role].color;
+    playerObj.collectTaxes(myColor);
+
     this.notifySituation();
 };
 
