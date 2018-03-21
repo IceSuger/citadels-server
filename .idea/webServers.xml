@@ -2,7 +2,15 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="e09eedd8-136a-4642-8aac-a6877aa93659" name="aliyun" url="http://123.56.1.58">
+      <webServer id="e09eedd8-136a-4642-8aac-a6877aa93659" name="绕道VPS" url="http://localhost">
+        <fileTransfer host="localhost" port="16622" rootFolder="/home/xiaoyl/code" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="16622" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="2651dfa7-5ae3-450b-a12f-336339b0a53b" name="直连阿里云" url="http://123.56.1.58">
         <fileTransfer host="123.56.1.58" port="22" rootFolder="/home/xiaoyl/code" accessType="SFTP">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" />

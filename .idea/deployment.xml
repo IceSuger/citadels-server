@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="aliyun">
+  <component name="PublishConfigData" serverName="绕道VPS">
     <serverData>
-      <paths name="aliyun">
+      <paths name="直连阿里云">
+        <serverdata>
+          <mappings>
+            <mapping deploy="citadels-server" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="绕道VPS">
         <serverdata>
           <mappings>
             <mapping deploy="citadels-server" local="$PROJECT_DIR$" web="/" />

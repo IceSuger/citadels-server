@@ -88,8 +88,10 @@ game.init = function(){
 
     console.log(this.pile.pile.length);
     for (var uid in self.playerDict) {
-        self.takeCoins(2, uid);
-        self.drawCards(4, uid);
+        if (self.playerDict.hasOwnProperty(uid)) {
+            self.takeCoins(2, uid);
+            self.drawCards(4, uid);
+        }
     }
     console.log(this.pile.pile.length);
 
@@ -212,6 +214,19 @@ game.checkGameOver = function (_, self) {
     if (self.gameOver) {
         // self.fsm.
     } else {
+        //游戏继续，即将进入下一回合。
+        /*
+        1. 清空 playerDict 中的角色信息，player.role = consts.ROLES.NONE;
+
+        另外，在startPickingRole 中完成了 roleSet.reset()
+
+
+         */
+        for (uid in self.playerDict) {
+            if (self.playerDict.hasOwnProperty(uid)) {
+                self.playerDict[uid].role = consts.ROLES.NONE;
+            }
+        }
         setTimeout(function () {
             self.fsm.continueGame(self);
         });
@@ -367,6 +382,7 @@ game.useAbility = function(msg){
     // msg.targetRoleId;
     // msg.targetSeatId;
     // msg.targetIsSystem;
+    // msg.discardCards;
     // msg.uid;
     var self = this;
     var sourcePlayer = self.playerDict[msg.uid];
@@ -388,7 +404,7 @@ game.useAbility = function(msg){
         targetRole.stolenBy = msg.uid;
     } else if (sourcePlayer.role === consts.ROLES.MAGICIAN) {
         //魔术师：
-        if (msg.targetRoleId) {
+        if (msg.targetSeatId) {
             //  目标为玩家，则交换 sourcePlayer 和 targetPlayer 的手牌
             var tmp = [];
             sourcePlayer.handCards.forEach(function (value) {
@@ -496,6 +512,10 @@ game.build = function(msg){
     this.notifySituation();
 };
 
+/**
+ * 玩家结束回合。
+ * @param msg
+ */
 game.endRound = function (msg) {
     var self = this;
     self.nextRoleAction(null, self);

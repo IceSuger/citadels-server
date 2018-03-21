@@ -107,6 +107,13 @@ handler.useAbility = function (msg, session, next) {
     next();
 };
 
+handler.build = function (msg, session, next) {
+    msg.uid = session.uid;
+    msg.roomId = session.get('roomId');
+    this.roomService.build(msg);
+    next();
+};
+
 handler.endRound = function (msg, session, next) {
     msg.uid = session.uid;
     msg.roomId = session.get('roomId');
