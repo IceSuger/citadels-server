@@ -25,17 +25,7 @@ var Player = function(data){
     this.buildingDict = {}; //已建造的建筑
     this.handCards = [];    //手牌建筑，其中仅保存建筑牌的id们，允许有重复。
     this.role = consts.ROLES.NONE;
-    this.hasLibrary = false;
-    this.hasMagicSchool = false;
-    this.hasCollege = false;
-    this.hasSmithy = false;
-    this.hasObservatory = false;
-    this.hasCemetery = false;
-    this.hasGhostTown = false;
-    this.hasDragonGate = false;
-    this.hasLaboratory = false;
-    this.hasKeep = false;
-    this.hasGreatWall = false;
+
 
     this.score = 0;
     this.firstFullBuilding = false;
@@ -112,11 +102,12 @@ player.collectTaxes = function (myColor) {
                     self.coins++;
                 }
             }
+            if (cardId === consts.BUILDINGS.MAGIC_SCHOOL) {
+                //如果有魔法学校，则可指定为任意一种颜色，收入+1
+                self.coins++;
+            }
         }
-        if (self.hasMagicSchool) {
-            //若有魔法学校，则可以指定为任意颜色，则又有一块钱收入
-            self.coins++;
-        }
+
     }
 
 };

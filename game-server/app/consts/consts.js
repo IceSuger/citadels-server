@@ -118,7 +118,7 @@ module.exports = {
 
     END_GAME: {
         ALL_COLOR_CNT: 5,
-        FULL_BUILDING: 2
+        FULL_BUILDING: 4
     },
 
     SCORE: {

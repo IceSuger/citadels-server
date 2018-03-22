@@ -270,14 +270,13 @@ game.gameEnd = function (_, self) {
                 score += card.cost;
                 //2. 加本建筑的颜色到dict中
                 colorDict[card.color] = true;
+                //3. 如果本建筑是龙门或大学，则加2分
+                if (card.id === consts.BUILDINGS.COLLEGE || card.id === consts.BUILDINGS.DRAGON_GATE) {
+                    score += 2;
+                }
             }
         }
-        if (playerObj.hasCollege) {
-            score += 2;
-        }
-        if (playerObj.hasDragonGate) {
-            score += 2;
-        }
+
         if (playerObj.firstFullBuilding) {
             score += consts.SCORE.FIRST_FULL_PLAYER;
         } else if (playerObj.secondFullBuilding) {
@@ -386,7 +385,8 @@ game.takeCoinsOrBuildingCards = function(msg){
         this.notifyCurMove(pushMsg);    //this.channel.pushMessage('onMove', pushMsg);
         //判断给丫返回几张建筑牌
         var count = consts.CAN_TAKE_CARD_COUNT.NORMAL;
-        if(player.hasObservatory){
+        // if(player.hasObservatory){
+        if (curPlayerObj.buildingDict.hasOwnProperty(consts.BUILDINGS.OBSERVATORY)) {
             count = consts.CAN_TAKE_CARD_COUNT.OBSERVATORY;
         }
         var buildingCards4Picking = [];
@@ -514,6 +514,8 @@ game.useAbility = function(msg){
  *  3.从sourcePlayer手中删除金币
  *  4.银行增加金币
  *
+ *  5. 如果拆除的是紫色建筑，则将其主人的相应hasXXX属性置为false
+ *
  * @param msg
  */
 game.demolish = function (msg) {
@@ -635,10 +637,12 @@ game.notifyTakingAction = function () {
     var canTakeCoinCnt = consts.CAN_TAKE_COIN_COUNT.NORMAL;
     var canTakeCardCnt = consts.CAN_TAKE_CARD_COUNT.NORMAL;
     var canHaveCardCnt = consts.CAN_HAVE_CARD_COUNT.NORMAL;
-    if (curPlayerObj.hasLibrary) {
+    // if (curPlayerObj.hasLibrary) {
+    if (curPlayerObj.buildingDict.hasOwnProperty(consts.BUILDINGS.LIBRARY)) {
         canHaveCardCnt = consts.CAN_HAVE_CARD_COUNT.LIBRARY;
     }
-    if (curPlayerObj.hasObservatory) {
+    if (curPlayerObj.buildingDict.hasOwnProperty(consts.BUILDINGS.OBSERVATORY)) {
+        // if (curPlayerObj.hasObservatory) {
         canTakeCardCnt = consts.CAN_TAKE_CARD_COUNT.OBSERVATORY;
     }
     var msg = {
