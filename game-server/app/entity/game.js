@@ -155,7 +155,10 @@ game.startRolePicking = function (_, self) {
     //用2人测试一下。
     self.roleSet.banAndShowMany(roleSetSize - 1 - (self.totalPlayer + 1) - 1);
 
-    self.curPlayer = self.crownSeatId;
+    if (self.crownSeatId) {
+        //如果指定了皇冠
+        self.curPlayer = self.crownSeatId;
+    }
     self.cntOfPlayerPickedRole = 0;
 
     self.notifyPickingRole();
@@ -200,9 +203,14 @@ game.nextRoleAction = function (_, self) {
     }
     var curRoleObj = self.roleSet.roleList[self.curRole];
     console.log(curRoleObj);
+
     if (curRoleObj.seatId !== null && !curRoleObj.killed) {
         // console.log('该角色可被操控。');
         self.curPlayer = curRoleObj.seatId;
+        //如果当前角色为国王，则对crownSeatId赋值
+        if (self.curRole === consts.ROLES.KING) {
+            self.crownSeatId = curRoleObj.seatId;
+        }
         self.abilityEffectBeforeAction();
         self.notifyTakingAction();
         // console.log('通知客户端们。');
@@ -386,7 +394,7 @@ game.takeCoinsOrBuildingCards = function(msg){
         //判断给丫返回几张建筑牌
         var count = consts.CAN_TAKE_CARD_COUNT.NORMAL;
         // if(player.hasObservatory){
-        if (curPlayerObj.buildingDict.hasOwnProperty(consts.BUILDINGS.OBSERVATORY)) {
+        if (player.buildingDict.hasOwnProperty(consts.BUILDINGS.OBSERVATORY)) {
             count = consts.CAN_TAKE_CARD_COUNT.OBSERVATORY;
         }
         var buildingCards4Picking = [];
@@ -601,6 +609,45 @@ game.collectTaxes = function (msg) {
 };
 
 /**
+ * 铁匠铺技能。
+ * 支付2金币，摸取3张建筑牌。
+ *
+ * notifySituation();
+ * @param msg
+ */
+game.smithy = function (msg) {
+    var self = this;
+    var playerObj = this.playerDict[msg.uid];
+    playerObj.coins -= 2;
+    for (var i = 0; i < 3; i++) {
+        playerObj.handCards.push(self.pile.draw());
+    }
+    this.notifySituation();
+};
+
+/**
+ * 实验师技能。
+ * 丢弃1张手牌，获得1金币。
+ *
+ * notifySituation();
+ * @param msg
+ */
+game.laboratory = function (msg) {
+    var self = this;
+    self.pile.append(msg.cardId);
+    var playerObj = self.playerDict[msg.uid];
+
+    console.log('丢弃的牌id' + msg.cardId);
+    console.log('我的金币' + playerObj.coins);
+
+    playerObj.spendHandCard(msg.cardId);
+
+    playerObj.coins++;
+
+    this.notifySituation();
+};
+
+/**
  * 玩家结束回合。
  * @param msg
  */
@@ -633,7 +680,8 @@ game.notifyPickingRole = function () {
  */
 game.notifyTakingAction = function () {
     var self = this;
-    var curPlayerObj = self.roleSet.roleList[self.curRole];
+    // var curPlayerObj = self.roleSet.roleList[self.curRole];
+    var curPlayerObj = self.playerDict[self.seatMap[self.curPlayer]];
     var canTakeCoinCnt = consts.CAN_TAKE_COIN_COUNT.NORMAL;
     var canTakeCardCnt = consts.CAN_TAKE_CARD_COUNT.NORMAL;
     var canHaveCardCnt = consts.CAN_HAVE_CARD_COUNT.NORMAL;

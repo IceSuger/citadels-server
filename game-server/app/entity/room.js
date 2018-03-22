@@ -135,6 +135,16 @@ room.build = function(msg){
     game.build(msg);
 };
 
+room.smithy = function (msg) {
+    var game = this.game;
+    game.smithy(msg);
+};
+
+room.laboratory = function (msg) {
+    var game = this.game;
+    game.laboratory(msg);
+};
+
 room.endRound = function (msg) {
     var game = this.game;
     game.endRound(msg);

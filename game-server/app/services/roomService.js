@@ -142,6 +142,16 @@ roomService.build = function(msg){
     room.build(msg);
 };
 
+roomService.smithy = function (msg) {
+    var room = this.roomDict[msg.roomId];
+    room.smithy(msg);
+};
+
+roomService.laboratory = function (msg) {
+    var room = this.roomDict[msg.roomId];
+    room.laboratory(msg);
+};
+
 roomService.endRound = function (msg) {
     var room = this.roomDict[msg.roomId];
     room.endRound(msg);

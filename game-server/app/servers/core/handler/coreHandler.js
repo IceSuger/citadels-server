@@ -127,3 +127,17 @@ handler.collectTaxes = function (msg, session, next) {
     this.roomService.collectTaxes(msg);
     next();
 };
+
+handler.smithy = function (msg, session, next) {
+    msg.uid = session.uid;
+    msg.roomId = session.get('roomId');
+    this.roomService.smithy(msg);
+    next();
+};
+
+handler.laboratory = function (msg, session, next) {
+    msg.uid = session.uid;
+    msg.roomId = session.get('roomId');
+    this.roomService.laboratory(msg);
+    next();
+};
