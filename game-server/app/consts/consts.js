@@ -116,6 +116,17 @@ module.exports = {
         ABILITY: 13,
     },
 
+    END_GAME: {
+        ALL_COLOR_CNT: 5,
+        FULL_BUILDING: 2
+    },
+
+    SCORE: {
+        FIRST_FULL_PLAYER: 4,
+        OTHER_FULL_PLAYER: 2,
+        ALL_COLOR: 3
+    },
+
     CLIENT_ONLY: {
         EVENT: {
             PICK_ROLE: 11,

@@ -12,6 +12,7 @@ var Game = function(room) {
     var self = this;
     this.curPlayer = 0;
     this.totalPlayer = room.totalPlayer;
+    this.cntOfPlayerPickedRole = 0;
     // channel 这俩对象用来向客户端发消息
     this.channelService = room.channelService;
     this.channel = room.channel;
@@ -29,6 +30,7 @@ var Game = function(room) {
     this.pickableRoles = [];
     this.crownSeatId = 0;
     this.gameOver = false;
+    this.gameOverBuildingCnt = consts.END_GAME.FULL_BUILDING;//后续版本引入自定义结束建筑数后再修改这里，从room中获取。
     this.fsm = new StateMachine({
         init: 'initial',
         transitions: [
@@ -49,8 +51,9 @@ var Game = function(room) {
             onLeaveRolePick: self.startAction,
             onEndAllRolePick: self.nextRoleAction,
             // onActionTaking: self.nextRoleAction,
-            onEndAllAction: self.checkGameOver
+            onEndAllAction: self.checkGameOver,
             // onPreEnd: self.checkGameOver
+            onEnd: self.gameEnd
         }
     });
     this.pile = new Pile();
@@ -153,6 +156,7 @@ game.startRolePicking = function (_, self) {
     self.roleSet.banAndShowMany(roleSetSize - 1 - (self.totalPlayer + 1) - 1);
 
     self.curPlayer = self.crownSeatId;
+    self.cntOfPlayerPickedRole = 0;
 
     self.notifyPickingRole();
 
@@ -213,6 +217,9 @@ game.nextRoleAction = function (_, self) {
 game.checkGameOver = function (_, self) {
     if (self.gameOver) {
         // self.fsm.
+        setTimeout(function () {
+            self.fsm.endGame(self);
+        })
     } else {
         //游戏继续，即将进入下一回合。
         /*
@@ -231,6 +238,60 @@ game.checkGameOver = function (_, self) {
             self.fsm.continueGame(self);
         });
     }
+};
+
+/**
+ * 游戏结束。
+ * 依次计算每个玩家得分，写入player.score。
+ *
+ * 遍历玩家：
+ *  先算建筑总价值。按cost算。
+ *  是否有龙门，有就+2
+ *  是否有大学，有就+2
+ *
+ *  是否凑齐5色，有就+分
+ *  是否造满及是否第一个造满，通过造满时赋值 player.firstFullBuilding 和 player.secondFullBuilding 来实现
+ *
+ *
+ * updateSituation()
+ *
+ * @param _     第一个参数忘了是啥了。。。fsm的文档里有。反正咱这里用不到，就匿名了。
+ * @param self  就是本game实例
+ */
+game.gameEnd = function (_, self) {
+    self.seatMap.forEach(function (uid, seatId) {
+        var playerObj = self.playerDict[uid];
+        var score = 0;
+        var colorDict = {};
+        for (cardId in playerObj.buildingDict) {
+            if (playerObj.buildingDict.hasOwnProperty(cardId)) {
+                //1. 加本建筑的cost到得分中
+                var card = buildings[cardId];
+                score += card.cost;
+                //2. 加本建筑的颜色到dict中
+                colorDict[card.color] = true;
+            }
+        }
+        if (playerObj.hasCollege) {
+            score += 2;
+        }
+        if (playerObj.hasDragonGate) {
+            score += 2;
+        }
+        if (playerObj.firstFullBuilding) {
+            score += consts.SCORE.FIRST_FULL_PLAYER;
+        } else if (playerObj.secondFullBuilding) {
+            score += consts.SCORE.OTHER_FULL_PLAYER;
+        }
+        if (Object.keys(colorDict).length === consts.END_GAME.ALL_COLOR_CNT) {
+            score += consts.SCORE.ALL_COLOR;
+        }
+
+
+        playerObj.score = score;
+    });
+    self.notifySituation();
+    self.notifyGameOver();
 };
 
 /**
@@ -259,7 +320,8 @@ game.drawCards = function (count, uid) {
  * 选角色。
  *  1. 将角色标记为不可选，记录角色对应的玩家 role.player
  *  2. 记录玩家选取的角色    player.role
- *  3. 判断是否结束了选角色回合，即判断当前玩家是否为最后一个玩家：curPlayer == totalPlayer - 1
+ *  3. 判断是否结束了选角色回合，即判断当前玩家是否为最后一个玩家：
+ *  【注意】之前判断是否全部选完角色的逻辑是错的。应该是设置一个累加变量，每轮选角色开始时置0，最终判断这个量是否==totalPlayer.
  *      是，则 fsm 状态转移，进入行动阶段
  *      否，则 curPlayer++, notifyPickingRole();
  *
@@ -270,8 +332,10 @@ game.pickRole = function(msg){
     var uid = this.seatMap[msg.seatId];
     var player = this.playerDict[uid];
     player.pickRole(msg);
-    if (this.curPlayer !== this.totalPlayer - 1) {
-        this.curPlayer++;
+    this.cntOfPlayerPickedRole++;
+    // if (this.curPlayer !== this.totalPlayer - 1) {
+    if (this.cntOfPlayerPickedRole !== this.totalPlayer) {
+        this.curPlayer = (this.curPlayer + 1) % this.totalPlayer;
         // return consts.GAME.NEXT_PLAYER_PICK_ROLE;
         this.notifyPickingRole();
         // this.fsm.continueRolePick();
@@ -504,6 +568,13 @@ game.build = function(msg){
     this.bank.coins += cost;
     //3.
     if (Object.keys(playerObj.buildingDict).length >= self.gameOverBuildingCnt) {
+        //如果gameOver==false，说明当前玩家是第一个造满建筑的，赋值firstFullBuilding，否则说明不是第一个，赋值secondFullBuilding
+        if (!self.gameOver) {
+            playerObj.firstFullBuilding = true;
+        } else {
+            playerObj.secondFullBuilding = true;
+        }
+
         self.gameOver = true;
     }
     //4.
@@ -595,4 +666,10 @@ game.notifyGameStateChange = function () {
     };
     self.channel.pushMessage('onGameStateChange', msg);
 };
+
+game.notifyGameOver = function () {
+    var self = this;
+    self.channel.pushMessage('onGameOver', {});
+};
+
 module.exports = Game;

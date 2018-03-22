@@ -36,6 +36,10 @@ var Player = function(data){
     this.hasLaboratory = false;
     this.hasKeep = false;
     this.hasGreatWall = false;
+
+    this.score = 0;
+    this.firstFullBuilding = false;
+    this.secondFullBuilding = false;
 };
 
 player = Player.prototype;
@@ -109,7 +113,12 @@ player.collectTaxes = function (myColor) {
                 }
             }
         }
+        if (self.hasMagicSchool) {
+            //若有魔法学校，则可以指定为任意颜色，则又有一块钱收入
+            self.coins++;
+        }
     }
+
 };
 
 module.exports = Player;
