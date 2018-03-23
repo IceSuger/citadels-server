@@ -102,7 +102,9 @@ player.collectTaxes = function (myColor) {
                     self.coins++;
                 }
             }
-            if (cardId === consts.BUILDINGS.MAGIC_SCHOOL) {
+            console.log('cardId' + cardId);
+            console.log('MAGIC_SCHOOL' + consts.BUILDINGS.MAGIC_SCHOOL);
+            if (Number(cardId) === consts.BUILDINGS.MAGIC_SCHOOL) {
                 //如果有魔法学校，则可指定为任意一种颜色，收入+1
                 self.coins++;
             }

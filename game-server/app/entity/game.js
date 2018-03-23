@@ -290,7 +290,12 @@ game.gameEnd = function (_, self) {
         } else if (playerObj.secondFullBuilding) {
             score += consts.SCORE.OTHER_FULL_PLAYER;
         }
-        if (Object.keys(colorDict).length === consts.END_GAME.ALL_COLOR_CNT) {
+        //准备判断鬼城（可被指定为任一颜色）
+        var colorCnt = Object.keys(colorDict).length;
+        if (playerObj.buildingDict.hasOwnProperty(consts.BUILDINGS.GHOST_TOWN)) {
+            colorCnt++;
+        }
+        if (colorCnt >= consts.END_GAME.ALL_COLOR_CNT) {
             score += consts.SCORE.ALL_COLOR;
         }
 
@@ -517,12 +522,24 @@ game.useAbility = function(msg){
  *  msg.targetBuilding
  *  msg.demolishCost    军阀要交出的金币数
  *
- *  1.将要拆的建筑塞进pile
+ *  1.将要拆的建筑塞进pile  //不一定啊！得看墓地怎么行动。墓地如果不回收，才能进入牌堆底部！
  *  2.从targetPlayer手中删除建筑
  *  3.从sourcePlayer手中删除金币
  *  4.银行增加金币
  *
- *  5. 如果拆除的是紫色建筑，则将其主人的相应hasXXX属性置为false
+ *
+ * 5. 检查场上是否有墓地，若有，则广播等待墓地行动事件。
+ * 然后客户端的军阀将行动挂起。
+ *
+ * 拆除过程：
+ *  0.游戏开始先监听 cemetery 和 cemeteryDone 事件。
+ *
+ *  1.军阀通知服务器，拆哪个建筑
+ *  2.军阀操作挂起，即在拆除请求发出后，立即设置标志变量 myRoundNow = false ，不允许继续行动
+ *  3.服务端判断有无墓地，
+ *      若有则等待墓地行动，墓地行动后，推送 cemeteryDone
+ *      若无，则直接推送 cemeteryDone
+ *  4.客户端监听cemeteryDone，到来后军阀将 myRoundNow = true。
  *
  * @param msg
  */
@@ -531,14 +548,25 @@ game.demolish = function (msg) {
     var targetPlayer = self.playerDict[self.seatMap[msg.targetSeatId]];
     var sourcePlayer = self.playerDict[msg.uid];
 
-    //1.
-    self.pile.append(msg.targetBuilding);
+
     //2.
     targetPlayer.demolishBuilding(msg.targetBuilding);
     //3.
     sourcePlayer.coins -= msg.demolishCost;
     //4.
     self.bank.coins += msg.demolishCost;
+
+    //5.
+    Object.keys(self.playerDict).forEach(function (uid) {
+        if (self.playerDict[uid].buildingDict.hasOwnProperty(consts.BUILDINGS.CEMETERY)) {
+            //找到了墓地。则广播事件。
+            self.notifyCemetery(uid);
+        } else {
+            //1.
+            self.pile.append(msg.targetBuilding);
+            self.notifyCemeteryDone();
+        }
+    })
 };
 
 /**
@@ -647,6 +675,22 @@ game.laboratory = function (msg) {
     this.notifySituation();
 };
 
+
+game.recycle = function (msg) {
+    if (msg.recycle) {
+        //墓地主人选择回收
+        var playerObj = self.playerDict[msg.uid];
+        playerObj.coins--;
+        playerObj.addHandCard(msg.cardId);
+    } else {
+        //不回收，则牌放回牌堆底部
+        this.pile.append(msg.cardId);
+    }
+
+    this.notifyCemeteryDone();
+    this.notifySituation();
+};
+
 /**
  * 玩家结束回合。
  * @param msg
@@ -717,6 +761,18 @@ game.notifyGameStateChange = function () {
         curState: self.curState
     };
     self.channel.pushMessage('onGameStateChange', msg);
+};
+
+game.notifyCemetery = function () {
+    var msg = {
+        cardId: cardId
+    };
+    this.channel.pushMessage('onCemetery', msg);
+};
+
+game.notifyCemeteryDone = function () {
+
+    this.channel.pushMessage('onCemeteryDone', {});
 };
 
 game.notifyGameOver = function () {
