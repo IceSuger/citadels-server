@@ -7,6 +7,7 @@ var consts = require('../consts/consts');
 var Role = function(staticRole){
     this.id = staticRole.id;
     this.color = staticRole.color;
+    this.name = staticRole.name;
     this.killed = false;
     this.stolenBy = null;//本轮盗贼玩家uid
     this.bannedAndShown = false;

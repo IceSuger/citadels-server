@@ -17,35 +17,43 @@ var consts = require('../consts/consts');
 var roles = [
     {
         "id": 1,
-        "color": consts.COLOR.NONE
+        "color": consts.COLOR.NONE,
+        "name": "刺客"
     },
     {
         "id": 2,
-        "color": consts.COLOR.NONE
+        "color": consts.COLOR.NONE,
+        "name": "盗贼"
     },
     {
         "id": 3,
-        "color": consts.COLOR.NONE
+        "color": consts.COLOR.NONE,
+        "name": "魔术师"
     },
     {
         "id": 4,
-        "color": consts.COLOR.GOLDEN
+        "color": consts.COLOR.GOLDEN,
+        "name": "国王"
     },
     {
         "id": 5,
-        "color": consts.COLOR.BLUE
+        "color": consts.COLOR.BLUE,
+        "name": "主教"
     },
     {
         "id": 6,
-        "color": consts.COLOR.GREEN
+        "color": consts.COLOR.GREEN,
+        "name": "商人"
     },
     {
         "id": 7,
-        "color": consts.COLOR.NONE
+        "color": consts.COLOR.NONE,
+        "name": "建筑师"
     },
     {
         "id": 8,
-        "color": consts.COLOR.RED
+        "color": consts.COLOR.RED,
+        "name": "军阀"
     }
 ];
 

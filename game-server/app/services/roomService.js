@@ -63,8 +63,8 @@ roomService.enterRoom = function(msg) {
     } else if (room.totalPlayer === room.playerCnt) {
         code = consts.ENTER_ROOM.ERROR_ROOM_FULL;
     } else {
-        room.playerEnter(msg);
-        code = consts.ENTER_ROOM.OK;
+        code = room.playerEnter(msg);
+        // code = consts.ENTER_ROOM.OK;
     }
     var retmsg = {
         code: code,

@@ -4,6 +4,7 @@
 var Game = require('./game');
 var Player = require('./player');
 var pomelo = require('pomelo');
+var consts = require('../consts/consts');
 
 var Room = function(msg){
     this.roomId = msg.roomId;
@@ -45,41 +46,81 @@ room.notifyRoomReadyChange = function () {
 
 /**
  * 有玩家加入房间。
- * 初始化玩家，并通知房间内所有玩家，包括自己。
+ *
+ * 判断：游戏是否进行中？
+ *  若是，则由game实例将其disconnect = false， 并在这里加入channel。
+ *  若否，则初始化玩家，加入channel，并通知房间内所有玩家，包括自己。
+ *
+ *
  * @param msg
  */
 room.playerEnter = function (msg) {
-    // this.playerCnt++;
-    this.playerDict[msg.uid] = new Player(msg);
-    this.playerCnt = Object.keys(this.playerDict).length;
-    if (!!this.channel) {
-        this.channel.add(msg.uid, msg.serverId);
+    var status;
+    if (this.game && this.game.gameOn) {
+        //游戏正在进行中
+        if (this.game.playerDict.hasOwnProperty(msg.uid)) {
+            //若该玩家属于本局游戏
+            if (!!this.channel) {
+                this.channel.add(msg.uid, msg.serverId);
+            }
+            this.game.playerReconnect(msg.uid, msg.serverId);
+            status = consts.ENTER_ROOM.OK;
+        } else {
+            //该玩家不属于本局游戏
+            status = consts.ENTER_ROOM.ERROR_ROOM_FULL;
+        }
+    } else {
+        this.playerDict[msg.uid] = new Player(msg);
+        this.playerCnt = Object.keys(this.playerDict).length;
+        if (!!this.channel) {
+            this.channel.add(msg.uid, msg.serverId);
+        }
+        this.notifyRoomMemberChange();
+        this.notifyRoomReadyChange();
+        status = consts.ENTER_ROOM.OK;
     }
-    this.notifyRoomMemberChange();
-    this.notifyRoomReadyChange();
+
+
+    return status;
 };
 
 /**
  * 有玩家断开连接或者离开房间。
+ *
+ * 判断游戏是否进行中：
+ *  若是，则
+ *      标记该玩家为掉线： player.disconnect = true
+ *  若否，则
+ *      从房间中删除该玩家（即原有的玩家退出逻辑）
+ *
+ * 无论如何，都从channel中删除该玩家。
+ *
  * @param uid
  * @param sid
  * @returns {number|*}  房间当前剩下的玩家数。
  */
 room.playerLeave = function (uid, sid) {
-    delete this.playerDict[uid];
-    this.playerCnt = Object.keys(this.playerDict).length;
+    if (this.game && this.game.gameOn) {
+        //游戏正在进行中
+        this.game.playerDisconnect(uid);
 
-    this.readyPlayers.removeByValue(uid);
+    } else {
 
+
+        delete this.playerDict[uid];
+
+        this.readyPlayers.removeByValue(uid);
+
+
+        this.notifyRoomMemberChange();
+        this.notifyRoomReadyChange();
+    }
     var channel = this.channel;
     // leave channel
     if (!!channel) {
         channel.leave(uid, sid);
     }
-
-    this.notifyRoomMemberChange();
-    this.notifyRoomReadyChange();
-
+    this.playerCnt = Object.keys(this.playerDict).length;
     return this.playerCnt;
 };
 

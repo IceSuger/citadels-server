@@ -21,6 +21,8 @@ var Player = function(data){
     this.wxAvatar = data.wxAvatar;
     this.uid = data.uid;
 
+    this.disconnect = false;
+
     this.coins = 0;
     this.buildingDict = {}; //已建造的建筑
     this.handCards = [];    //手牌建筑，其中仅保存建筑牌的id们，允许有重复。
@@ -85,6 +87,7 @@ player.demolishBuilding = function (cardId) {
  */
 player.collectTaxes = function (myColor) {
     var self = this;
+    var tax = 0;
     // var myColor = roleSet.roleList[player.role].color;
     // console.log(buildings[cardId]);
     console.log(myColor);
@@ -99,18 +102,22 @@ player.collectTaxes = function (myColor) {
                 if (buildings[cardId].color === myColor) {
                     // console.log(buildings[cardId]);
                     // console.log(myColor);
-                    self.coins++;
+                    // self.coins++;
+                    tax++;
                 }
             }
-            console.log('cardId' + cardId);
-            console.log('MAGIC_SCHOOL' + consts.BUILDINGS.MAGIC_SCHOOL);
+            // console.log('cardId' + cardId);
+            // console.log('MAGIC_SCHOOL' + consts.BUILDINGS.MAGIC_SCHOOL);
             if (Number(cardId) === consts.BUILDINGS.MAGIC_SCHOOL) {
                 //如果有魔法学校，则可指定为任意一种颜色，收入+1
-                self.coins++;
+                // self.coins++;
+                tax++;
             }
         }
 
     }
+    self.coins += tax;
+    return tax;
 
 };
 

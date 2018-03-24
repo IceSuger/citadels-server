@@ -7,6 +7,7 @@ var RoleSet = require('./roleSet');
 var Pile = require('./pile');
 var Bank = require('./bank');
 var buildings = require('../consts/buildings');
+var moment = require('moment');
 
 var Game = function(room) {
     var self = this;
@@ -58,6 +59,7 @@ var Game = function(room) {
     });
     this.pile = new Pile();
     this.bank = new Bank();
+    this.historyMsg = null;
 
     console.log("Before Game.init ");
     this.init();
@@ -84,10 +86,12 @@ game.init = function(){
 
     this.pile.reset();
     this.bank.reset();
+    this.historyMsg = [];
 
     var i = Math.random();  //0~1 random number
     this.crownSeatId = Math.ceil(i * this.totalPlayer) - 1;    //0~7 random int
     console.log('CROWN: ' + this.crownSeatId);
+    this.addLog('皇冠随机初始化为' + this.crownSeatId + '号玩家。');
 
     console.log(this.pile.pile.length);
     for (var uid in self.playerDict) {
@@ -142,6 +146,7 @@ game.startRolePicking = function (_, self) {
      *  notifyPlayer;
      */
     // console.log(self);
+    self.addLog('开始轮流选角色。');
     self.curState = consts.GAME_STATE.ROLE_PICKING;
     self.notifyGameStateChange();
     self.roleSet.reset();
@@ -159,6 +164,7 @@ game.startRolePicking = function (_, self) {
         //如果指定了皇冠
         self.curPlayer = self.crownSeatId;
     }
+    self.addLog('本轮从' + self.curPlayer + '号玩家（' + self.playerDict[self.seatMap[self.curPlayer]].wxNickName + '）开始选角色。');
     self.cntOfPlayerPickedRole = 0;
 
     self.notifyPickingRole();
@@ -178,6 +184,7 @@ game.startAction = function (_, self) {
     self.curState = consts.GAME_STATE.COIN_OR_CARD;
     self.notifyGameStateChange();
     console.log('开始行动回合');
+    self.addLog('开始行动回合。');
 };
 
 /**
@@ -213,10 +220,13 @@ game.nextRoleAction = function (_, self) {
         }
         self.abilityEffectBeforeAction();
         self.notifyTakingAction();
+
+        self.addLog(self.curRole + '号角色' + curRoleObj.name + '（' + self.playerDict[self.seatMap[self.curPlayer]].wxNickName + '）开始行动回合！');
         // console.log('通知客户端们。');
     } else {
         // console.log('该角色不可操控，换下一个。');
         var _self = self;
+        self.addLog(self.curRole + '号角色 ' + curRoleObj.name + ' 不可行动。');
         // self.fsm.continueAction(null);
         self.nextRoleAction(null, self);
     }
@@ -304,6 +314,7 @@ game.gameEnd = function (_, self) {
     });
     self.notifySituation();
     self.notifyGameOver();
+    self.addLog('游戏结束。');
 };
 
 /**
@@ -379,16 +390,19 @@ game.takeCoinsOrBuildingCards = function(msg){
     //若是商人，先多给1金币
     if (player.role === consts.ROLES.MERCHANT) {
         self.takeCoins(consts.CAN_TAKE_COIN_COUNT.MERCHANT, msg.uid);
+        self.addLog('商人被动多获得1金币。');
     }
     //若是建筑师，先多给2张牌
     if (player.role === consts.ROLES.ARCHITECT) {
         for (var j = 0; j < consts.CAN_TAKE_CARD_COUNT.ARCHITECT; j++) {
             player.addHandCard(self.pile.draw());
         }
+        self.addLog('建筑师被动多获得2手牌。');
     }
     if (msg.move === consts.MOVE.TAKE_COINS) {
         self.takeCoins(consts.CAN_TAKE_COIN_COUNT.NORMAL, msg.uid);
         self.notifySituation();
+        self.addLog(self.roleSet.roleList[player.role].name + '（' + player.wxNickName + '）拿取2金币。');
     } else {
         //通知场上，当前玩家选择拿建筑
         var pushMsg = {
@@ -417,6 +431,7 @@ game.takeCoinsOrBuildingCards = function(msg){
         //     uid: tuid,
         //     sid: tsid
         // }]);
+        self.addLog(self.roleSet.roleList[player.role].name + '（' + player.wxNickName + '）摸了' + count + '张建筑牌。');
         return buildingCards4Picking;
     }
 };
@@ -439,6 +454,7 @@ game.pickBuildingCard = function(msg){
         self.pile.append(value)
     });
     self.notifySituation();
+    self.addLog('选择了' + msg.pickedList.length + '张加入手牌。');
 };
 
 /**
@@ -473,10 +489,12 @@ game.useAbility = function(msg){
     if (sourcePlayer.role === consts.ROLES.ASSASSIN) {
         //刺客：目标角色被标记为killed
         targetRole.killed = true;
+        self.addLog('刺客刺杀了 ' + targetRole.name + '。');
         // self.kill()
     } else if (sourcePlayer.role === consts.ROLES.THIEF) {
         //盗贼：目标角色 stolenBy 被赋值
         targetRole.stolenBy = msg.uid;
+        self.addLog('盗贼偷了 ' + targetRole.name + ' 的金币。');
     } else if (sourcePlayer.role === consts.ROLES.MAGICIAN) {
         //魔术师：
         if (msg.targetSeatId) {
@@ -493,6 +511,7 @@ game.useAbility = function(msg){
             tmp.forEach(function (value) {
                 targetPlayer.handCards.push(value);
             });
+            self.addLog('魔术师与玩家 ' + targetPlayer.wxNickName + ' 交换了全部手牌。');
         } else {
             //  目标为系统，则将 discardCards[] 塞到pile底部，从手牌里删掉 discardCards，再给他起等数量张牌
             self.pile.appendMany(msg.discardCards);
@@ -503,6 +522,7 @@ game.useAbility = function(msg){
             for (var i = 0; i < msg.discardCards.length; i++) {
                 sourcePlayer.handCards.push(self.pile.draw());
             }
+            self.addLog('魔术师与系统交换了' + msg.discardCards.length + '张手牌。');
         }
     } else if (sourcePlayer.role === consts.ROLES.WARLORD) {
         //军阀：
@@ -556,6 +576,8 @@ game.demolish = function (msg) {
     //4.
     self.bank.coins += msg.demolishCost;
 
+    self.addLog('军阀用' + msg.demolishCost + '金币摧毁了玩家 ' + targetPlayer.wxNickName + ' 的建筑：' + buildings[msg.targetBuilding].name + '。');
+
     //5.
     Object.keys(self.playerDict).forEach(function (uid) {
         if (self.playerDict[uid].buildingDict.hasOwnProperty(consts.BUILDINGS.CEMETERY)) {
@@ -604,13 +626,17 @@ game.build = function(msg){
     playerObj.build(msg.cardId);
     var cost = buildings[msg.cardId].cost;
     this.bank.coins += cost;
+
+    self.addLog('玩家 ' + playerObj.wxNickName + ' 建造了 ' + buildings[msg.cardId].name + '。');
     //3.
     if (Object.keys(playerObj.buildingDict).length >= self.gameOverBuildingCnt) {
         //如果gameOver==false，说明当前玩家是第一个造满建筑的，赋值firstFullBuilding，否则说明不是第一个，赋值secondFullBuilding
         if (!self.gameOver) {
             playerObj.firstFullBuilding = true;
+            self.add('玩家 ' + playerObj.wxNickName + ' 第一个造满了建筑。');
         } else {
             playerObj.secondFullBuilding = true;
+            self.add('玩家 ' + playerObj.wxNickName + ' 也造满了建筑。');
         }
 
         self.gameOver = true;
@@ -631,8 +657,8 @@ game.collectTaxes = function (msg) {
     var self = this;
     var playerObj = this.playerDict[msg.uid];
     var myColor = this.roleSet.roleList[playerObj.role].color;
-    playerObj.collectTaxes(myColor);
-
+    var tax = playerObj.collectTaxes(myColor);
+    self.addLog('玩家 ' + playerObj.wxNickName + ' 收取了建筑带来的税收共' + tax + '金币。');
     this.notifySituation();
 };
 
@@ -651,6 +677,7 @@ game.smithy = function (msg) {
         playerObj.handCards.push(self.pile.draw());
     }
     this.notifySituation();
+    this.addLog('玩家 ' + playerObj.wxNickName + ' 使用铁匠铺的特技，支付2金币摸取了3张手牌。');
 };
 
 /**
@@ -673,6 +700,7 @@ game.laboratory = function (msg) {
     playerObj.coins++;
 
     this.notifySituation();
+    this.addLog('玩家 ' + playerObj.wxNickName + ' 使用实验室的特技，丢弃1张手牌，获得了1金币。');
 };
 
 
@@ -682,9 +710,11 @@ game.recycle = function (msg) {
         var playerObj = self.playerDict[msg.uid];
         playerObj.coins--;
         playerObj.addHandCard(msg.cardId);
+        this.addLog('铁匠铺主人 ' + playerObj.wxNickName + ' 花费1金币，回收了建筑牌 ' + buildings[msg.cardId].name + '。');
     } else {
         //不回收，则牌放回牌堆底部
         this.pile.append(msg.cardId);
+        this.addLog('铁匠铺主人 ' + playerObj.wxNickName + ' 拒绝回收建筑牌 ' + buildings[msg.cardId].name + '。');
     }
 
     this.notifyCemeteryDone();
@@ -697,8 +727,33 @@ game.recycle = function (msg) {
  */
 game.endRound = function (msg) {
     var self = this;
+    self.addLog(self.roleSet.roleList[self.curRole].name + '结束了行动回合。');
     self.nextRoleAction(null, self);
 };
+
+/**
+ * 游戏进行中，有玩家掉线
+ * @param uid
+ */
+game.playerDisconnect = function (uid) {
+    this.playerDict[uid].disconnect = true;
+    this.addLog(this.playerDict[uid].wxNickName + ' 掉线了。');
+    this.notifySituation();
+};
+
+/**
+ * 游戏进行中，有玩家重连。
+ * disconnect = false
+ * 推送局势到整个房间。
+ * 单点推送本局游戏历史。
+ */
+game.playerReconnect = function (uid, sid) {
+    this.playerDict[uid].disconnect = false;
+    this.notifySituation();
+    this.addLog(this.playerDict[uid].wxNickName + ' 重连了。');
+    this.channelService.pushMessageByUids('onReconnect', {logs: this.historyMsg}, [{uid: uid, sid: sid}]);
+};
+
 
 /**
  * 通知客户端，当前是谁在干啥。
@@ -778,6 +833,13 @@ game.notifyCemeteryDone = function () {
 game.notifyGameOver = function () {
     var self = this;
     self.channel.pushMessage('onGameOver', {});
+};
+
+game.addLog = function (text) {
+    var time = moment().format('HH:mm:ss');
+    var log = '[' + time + '] ' + text;
+    this.historyMsg.push(log);
+    this.channel.pushMessage('onLog', {log: log});
 };
 
 module.exports = Game;
