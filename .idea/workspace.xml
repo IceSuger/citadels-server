@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6b20a03c-1453-4521-a035-3fb9f45e0d19" name="Default" comment="">
+    <list default="true" id="6b20a03c-1453-4521-a035-3fb9f45e0d19" name="Default" comment="v0.1.1.1 【bugfix】如果有用户中途掉线，曾经会导致掉线用户判断错误。">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/game-server/app/entity/game.js" afterPath="$PROJECT_DIR$/game-server/app/entity/game.js" />
     </list>
@@ -47,18 +47,17 @@
           <file leaf-file-name="game.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="417">
-                  <caret line="232" column="12" lean-forward="false" selection-start-line="232" selection-start-column="12" selection-end-line="232" selection-end-column="12" />
+                <state relative-caret-position="255">
+                  <caret line="832" column="2" lean-forward="false" selection-start-line="832" selection-start-column="2" selection-end-line="832" selection-end-column="2" />
                   <folding>
-                    <element signature="e#10864#11000#0" expanded="false" />
-                    <element signature="e#12362#14389#0" expanded="false" />
-                    <element signature="e#14573#14929#0" expanded="false" />
-                    <element signature="e#15080#17398#0" expanded="false" />
-                    <element signature="e#18094#18908#0" expanded="false" />
-                    <element signature="e#19538#20364#0" expanded="false" />
-                    <element signature="e#20555#20841#0" expanded="false" />
-                    <element signature="e#20948#21239#0" expanded="false" />
-                    <element signature="e#21742#22255#0" expanded="false" />
+                    <element signature="e#10878#11014#0" expanded="false" />
+                    <element signature="e#12376#14403#0" expanded="false" />
+                    <element signature="e#14587#14943#0" expanded="false" />
+                    <element signature="e#15094#17412#0" expanded="false" />
+                    <element signature="e#18108#18922#0" expanded="false" />
+                    <element signature="e#20575#20861#0" expanded="false" />
+                    <element signature="e#20968#21259#0" expanded="false" />
+                    <element signature="e#21762#22275#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -473,7 +472,7 @@
       <workItem from="1521529390817" duration="5350000" />
       <workItem from="1521556776175" duration="31375000" />
       <workItem from="1521731850158" duration="25531000" />
-      <workItem from="1522047659179" duration="18722000" />
+      <workItem from="1522047659179" duration="22055000" />
     </task>
     <task id="LOCAL-00001" summary="1. 多人进入房间可用，但可能还有bug；&#10;2. 离开房间或断开连接，将从room中删除player，但可能还有bug；&#10;3. 玩家准备和取消准备，还未测试，可能有bug。">
       <created>1519571699091</created>
@@ -594,11 +593,18 @@
       <option name="project" value="LOCAL" />
       <updated>1522137906363</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="v0.1.1.1 【bugfix】如果有用户中途掉线，曾经会导致掉线用户判断错误。">
+      <created>1522147782212</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1522147782212</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="212567000" />
+    <option name="totallyTimeSpent" value="215900000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1015" extended-state="6" />
@@ -658,7 +664,8 @@
     <MESSAGE value="v0.0.17.3  bugfix,见有道云笔记 开发日记 2018-3-23" />
     <MESSAGE value="v0.0.19 1.增加了日志显示；2.增加了断线后手动重进房间的逻辑。" />
     <MESSAGE value="v0.1.0.10  完善了断线重连的处理。" />
-    <option name="LAST_COMMIT_MESSAGE" value="v0.1.0.10  完善了断线重连的处理。" />
+    <MESSAGE value="v0.1.1.1 【bugfix】如果有用户中途掉线，曾经会导致掉线用户判断错误。" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.1.1.1 【bugfix】如果有用户中途掉线，曾经会导致掉线用户判断错误。" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1042,18 +1049,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="417">
-          <caret line="232" column="12" lean-forward="false" selection-start-line="232" selection-start-column="12" selection-end-line="232" selection-end-column="12" />
+        <state relative-caret-position="255">
+          <caret line="832" column="2" lean-forward="false" selection-start-line="832" selection-start-column="2" selection-end-line="832" selection-end-column="2" />
           <folding>
-            <element signature="e#10864#11000#0" expanded="false" />
-            <element signature="e#12362#14389#0" expanded="false" />
-            <element signature="e#14573#14929#0" expanded="false" />
-            <element signature="e#15080#17398#0" expanded="false" />
-            <element signature="e#18094#18908#0" expanded="false" />
-            <element signature="e#19538#20364#0" expanded="false" />
-            <element signature="e#20555#20841#0" expanded="false" />
-            <element signature="e#20948#21239#0" expanded="false" />
-            <element signature="e#21742#22255#0" expanded="false" />
+            <element signature="e#10878#11014#0" expanded="false" />
+            <element signature="e#12376#14403#0" expanded="false" />
+            <element signature="e#14587#14943#0" expanded="false" />
+            <element signature="e#15094#17412#0" expanded="false" />
+            <element signature="e#18108#18922#0" expanded="false" />
+            <element signature="e#20575#20861#0" expanded="false" />
+            <element signature="e#20968#21259#0" expanded="false" />
+            <element signature="e#21762#22275#0" expanded="false" />
           </folding>
         </state>
       </provider>

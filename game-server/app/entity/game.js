@@ -660,10 +660,10 @@ game.build = function(msg){
         //如果gameOver==false，说明当前玩家是第一个造满建筑的，赋值firstFullBuilding，否则说明不是第一个，赋值secondFullBuilding
         if (!self.gameOver) {
             playerObj.firstFullBuilding = true;
-            self.add('玩家 ' + playerObj.wxNickName + ' 第一个造满了建筑。');
+            self.addLog('玩家 ' + playerObj.wxNickName + ' 第一个造满了建筑。');
         } else {
             playerObj.secondFullBuilding = true;
-            self.add('玩家 ' + playerObj.wxNickName + ' 也造满了建筑。');
+            self.addLog('玩家 ' + playerObj.wxNickName + ' 也造满了建筑。');
         }
 
         self.gameOver = true;
@@ -841,7 +841,7 @@ game.playerReconnect = function (uid, sid) {
     this.notifySituation();
     this.addLog(this.playerDict[uid].wxNickName + ' 重连了。');
     this.channelService.pushMessageByUids('onReconnect', {
-        logs: this.historyMsg,
+        // logs: this.historyMsg,
         playerDict: this.playerDict
     }, [{uid: uid, sid: sid}]);
 };
