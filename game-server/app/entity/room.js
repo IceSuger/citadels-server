@@ -56,20 +56,24 @@ room.notifyRoomReadyChange = function () {
  */
 room.playerEnter = function (msg) {
     var status;
-    if (this.game && this.game.gameOn) {
+    if (!!this.game && !this.game.gameOver) {
+        console.log("游戏还在进行中，玩家回来啦");
         //游戏正在进行中
         if (this.game.playerDict.hasOwnProperty(msg.uid)) {
             //若该玩家属于本局游戏
             if (!!this.channel) {
                 this.channel.add(msg.uid, msg.serverId);
             }
+            console.log("玩家属于这盘游戏，进行重连逻辑。");
             this.game.playerReconnect(msg.uid, msg.serverId);
             status = consts.ENTER_ROOM.OK;
         } else {
             //该玩家不属于本局游戏
+            console.log("玩家不属于这局游戏");
             status = consts.ENTER_ROOM.ERROR_ROOM_FULL;
         }
     } else {
+        console.log("游戏不存在或已结束。");
         this.playerDict[msg.uid] = new Player(msg);
         this.playerCnt = Object.keys(this.playerDict).length;
         if (!!this.channel) {
@@ -100,7 +104,7 @@ room.playerEnter = function (msg) {
  * @returns {number|*}  房间当前剩下的玩家数。
  */
 room.playerLeave = function (uid, sid) {
-    if (this.game && this.game.gameOn) {
+    if (!!this.game && !this.game.gameOver) {
         //游戏正在进行中
         this.game.playerDisconnect(uid);
 

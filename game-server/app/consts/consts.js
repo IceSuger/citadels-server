@@ -114,6 +114,7 @@ module.exports = {
         ROLE_PICKING: 11,
         COIN_OR_CARD: 12,
         ABILITY: 13,
+        ACTION: 22
     },
 
     END_GAME: {

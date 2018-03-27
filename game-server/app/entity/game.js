@@ -181,7 +181,7 @@ game.startRolePicking = function (_, self) {
  */
 game.startAction = function (_, self) {
     self.curRole = 0;
-    self.curState = consts.GAME_STATE.COIN_OR_CARD;
+    self.curState = consts.GAME_STATE.ACTION;
     self.notifyGameStateChange();
     console.log('开始行动回合');
     self.addLog('开始行动回合。');
@@ -212,17 +212,25 @@ game.nextRoleAction = function (_, self) {
     console.log(curRoleObj);
 
     if (curRoleObj.seatId !== null && !curRoleObj.killed) {
-        // console.log('该角色可被操控。');
         self.curPlayer = curRoleObj.seatId;
         //如果当前角色为国王，则对crownSeatId赋值
         if (self.curRole === consts.ROLES.KING) {
             self.crownSeatId = curRoleObj.seatId;
         }
         self.abilityEffectBeforeAction();
-        self.notifyTakingAction();
+        if (!self.playerDict[self.seatMap[curRoleObj.seatId]].disconnect) {
+            // console.log('该角色可被操控。');
 
-        self.addLog(self.curRole + '号角色' + curRoleObj.name + '（' + self.playerDict[self.seatMap[self.curPlayer]].wxNickName + '）开始行动回合！');
-        // console.log('通知客户端们。');
+            self.notifyTakingAction();
+            self.addLog(self.curRole + '号角色' + curRoleObj.name + '（' + self.playerDict[self.seatMap[self.curPlayer]].wxNickName + '）开始行动回合！');
+            // console.log('通知客户端们。');
+        } else {
+            //该角色已经被选，但玩家掉线了，则自动行动
+            self.defaultAction();
+            self.addLog("由于玩家掉线，系统自动执行行动：拿2金币。");
+            self.nextRoleAction(null, self);
+        }
+
     } else {
         // console.log('该角色不可操控，换下一个。');
         var _self = self;
@@ -355,6 +363,8 @@ game.pickRole = function(msg){
     var uid = this.seatMap[msg.seatId];
     var player = this.playerDict[uid];
     player.pickRole(msg);
+    //该玩家选角色，则将其已拿金币/建筑牌的行动标记置false
+    player.coinOrCardsTaken = false;
     this.cntOfPlayerPickedRole++;
     // if (this.curPlayer !== this.totalPlayer - 1) {
     if (this.cntOfPlayerPickedRole !== this.totalPlayer) {
@@ -399,6 +409,8 @@ game.takeCoinsOrBuildingCards = function(msg){
         }
         self.addLog('建筑师被动多获得2手牌。');
     }
+    //标记一下，该玩家已经拿过金币或建筑牌。
+    player.coinOrCardsTaken = true;
     if (msg.move === consts.MOVE.TAKE_COINS) {
         self.takeCoins(consts.CAN_TAKE_COIN_COUNT.NORMAL, msg.uid);
         self.notifySituation();
@@ -602,6 +614,7 @@ game.abilityEffectBeforeAction = function () {
         self.playerDict[curRoleObj.stolenBy].coins += curPlayerObj.coins;
         curPlayerObj.coins = 0;
     }
+    self.notifySituation();
 };
 
 /**
@@ -705,9 +718,10 @@ game.laboratory = function (msg) {
 
 
 game.recycle = function (msg) {
+    var playerObj = self.playerDict[msg.uid];
     if (msg.recycle) {
         //墓地主人选择回收
-        var playerObj = self.playerDict[msg.uid];
+
         playerObj.coins--;
         playerObj.addHandCard(msg.cardId);
         this.addLog('铁匠铺主人 ' + playerObj.wxNickName + ' 花费1金币，回收了建筑牌 ' + buildings[msg.cardId].name + '。');
@@ -732,12 +746,68 @@ game.endRound = function (msg) {
 };
 
 /**
+ * 主要用于掉线玩家的自动操作。
+ * 默认拿当前可选角色的第一个。
+ *
+ */
+game.defaultRolePick = function () {
+    var self = this;
+    var pickedRoleId;
+
+    for (var id = 1; id <= self.roleSet.roleList.length; id++) {
+        if (self.roleSet.roleList[id].pickable) {
+            pickedRoleId = id;
+            break;
+        }
+    }
+    console.log("当前要选角色：" + pickedRoleId);
+    self.pickRole({
+        roleId: pickedRoleId,
+        seatId: self.curPlayer
+    })
+};
+
+/**
+ * 主要用于掉线玩家的自动操作。
+ * 判断是否已经拿了金币/建筑牌，若否，则默认拿金币。
+ * 结束回合。
+ */
+game.defaultAction = function () {
+    var self = this;
+    var playerObj = self.playerDict[self.seatMap[self.curPlayer]];
+    if (!playerObj.coinOrCardsTaken) {
+        self.takeCoinsOrBuildingCards({
+            uid: playerObj.uid,
+            move: consts.MOVE.TAKE_COINS
+        })
+    }
+    self.endRound();
+};
+
+/**
  * 游戏进行中，有玩家掉线
+ * 如果此时正是该玩家的行动回合或选人回合，则：
+ *  选人就默认第一个；
+ *  行动就判断是否已经进行了拿金币拿牌二选一的操作，如果否，则拿2金币，然后结束回合。
  * @param uid
  */
 game.playerDisconnect = function (uid) {
     this.playerDict[uid].disconnect = true;
     this.addLog(this.playerDict[uid].wxNickName + ' 掉线了。');
+    /**
+     * 若果在行动回合
+     *
+     * 如果在选人回合
+     *
+     */
+
+    if (this.curState === consts.GAME_STATE.ROLE_PICKING) {
+        console.log("当前自动选角色中");
+        this.defaultRolePick();
+    } else if (this.curState === consts.GAME_STATE.ACTION) {
+        console.log("当前自动行动中..");
+        this.defaultAction();
+    }
     this.notifySituation();
 };
 
@@ -745,13 +815,16 @@ game.playerDisconnect = function (uid) {
  * 游戏进行中，有玩家重连。
  * disconnect = false
  * 推送局势到整个房间。
- * 单点推送本局游戏历史。
+ * 单点推送本局游戏历史和游戏局势。
  */
 game.playerReconnect = function (uid, sid) {
     this.playerDict[uid].disconnect = false;
     this.notifySituation();
     this.addLog(this.playerDict[uid].wxNickName + ' 重连了。');
-    this.channelService.pushMessageByUids('onReconnect', {logs: this.historyMsg}, [{uid: uid, sid: sid}]);
+    this.channelService.pushMessageByUids('onReconnect', {
+        logs: this.historyMsg,
+        playerDict: this.playerDict
+    }, [{uid: uid, sid: sid}]);
 };
 
 
@@ -764,13 +837,22 @@ game.notifyCurMove = function(msg){
     this.channel.pushMessage('onMove', msg);
 };
 
+/**
+ * 在这里加一个逻辑：判断当前玩家是否已掉线，若是，则直接替他选择第一个可选角色。
+ *
+ */
 game.notifyPickingRole = function () {
     var self = this;
     var msg = {
         curPlayer: self.curPlayer,
         roleList: self.roleSet.roleList
     };
-    self.channel.pushMessage('onPickingRole', msg);
+    //当前玩家是否掉线
+    if (self.playerDict[self.seatMap[self.curPlayer]].disconnect) {
+        self.defaultRolePick();
+    } else {
+        self.channel.pushMessage('onPickingRole', msg);
+    }
 };
 
 /**

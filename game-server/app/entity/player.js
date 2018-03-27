@@ -27,6 +27,7 @@ var Player = function(data){
     this.buildingDict = {}; //已建造的建筑
     this.handCards = [];    //手牌建筑，其中仅保存建筑牌的id们，允许有重复。
     this.role = consts.ROLES.NONE;
+    this.coinOrCardsTaken = false;
 
 
     this.score = 0;
@@ -51,7 +52,7 @@ player.addHandCard = function (cardId) {
 
 /**
  * 消耗一张指定的手牌
- * @param data
+ * @param cardId
  */
 player.spendHandCard = function (cardId) {
     this.handCards.removeByValue(cardId);

@@ -60,8 +60,8 @@ roomService.enterRoom = function(msg) {
         code = consts.ENTER_ROOM.ERROR_ROOM_NOT_EXIST;
     } else if (msg.passwd !== room.passwd) {
         code = consts.ENTER_ROOM.ERROR_WRONG_ROOM_PASSWD;
-    } else if (room.totalPlayer === room.playerCnt) {
-        code = consts.ENTER_ROOM.ERROR_ROOM_FULL;
+        // } else if (room.totalPlayer === room.playerCnt) {
+        //     code = consts.ENTER_ROOM.ERROR_ROOM_FULL;
     } else {
         code = room.playerEnter(msg);
         // code = consts.ENTER_ROOM.OK;
