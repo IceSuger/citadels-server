@@ -205,11 +205,15 @@ game.nextRoleAction = function (_, self) {
     if (self.curRole === self.roleSet.roleList.length) {
         // fsm.转移
         console.log('所有角色本回合结束。');
-        self.fsm.endAllAction(self);
+        // self.curRole = 55;
+        // setTimeout(function(){
+        //     self.fsm.endAllAction(self);
+        // }, 0);
+        self.checkGameOver(null, self);
         return;
     }
     var curRoleObj = self.roleSet.roleList[self.curRole];
-    console.log(curRoleObj);
+    // console.log(curRoleObj);
 
     if (curRoleObj.seatId !== null && !curRoleObj.killed) {
         self.curPlayer = curRoleObj.seatId;
@@ -226,9 +230,16 @@ game.nextRoleAction = function (_, self) {
             // console.log('通知客户端们。');
         } else {
             //该角色已经被选，但玩家掉线了，则自动行动
+            self.addLog("由于玩家" + self.playerDict[self.seatMap[self.curPlayer]].wxNickName + "掉线，系统自动执行行动：拿2金币。");
+            console.log('curRoleObj.seatId: ' + curRoleObj.seatId);
+            console.log('curRole: ' + self.curRole);
+            console.log('curPlayer: ' + self.curPlayer);
             self.defaultAction();
-            self.addLog("由于玩家掉线，系统自动执行行动：拿2金币。");
-            self.nextRoleAction(null, self);
+            console.log('curRoleObj.seatId: ' + curRoleObj.seatId);
+            console.log('curRole: ' + self.curRole);
+            console.log('curPlayer: ' + self.curPlayer);
+
+            // self.nextRoleAction(null, self);
         }
 
     } else {
@@ -242,10 +253,10 @@ game.nextRoleAction = function (_, self) {
 
 game.checkGameOver = function (_, self) {
     if (self.gameOver) {
-        // self.fsm.
-        setTimeout(function () {
-            self.fsm.endGame(self);
-        })
+        self.gameEnd(null, self);
+        // setTimeout(function () {
+        //     self.fsm.endGame(self);
+        // }, 0);
     } else {
         //游戏继续，即将进入下一回合。
         /*
@@ -260,9 +271,10 @@ game.checkGameOver = function (_, self) {
                 self.playerDict[uid].role = consts.ROLES.NONE;
             }
         }
-        setTimeout(function () {
-            self.fsm.continueGame(self);
-        });
+        // setTimeout(function () {
+        //     self.fsm.continueGame(self);
+        // }, 0);
+        self.startRolePicking(null, self);
     }
 };
 
@@ -375,7 +387,9 @@ game.pickRole = function(msg){
     } else {
         var self = this;
         console.log('全部玩家已选好角色。');
-        this.fsm.endAllRolePick(self);
+        // this.fsm.endAllRolePick(self);
+        this.startAction(null, this);
+        this.nextRoleAction(null, this);
     }
 };
 
@@ -741,6 +755,7 @@ game.recycle = function (msg) {
  */
 game.endRound = function (msg) {
     var self = this;
+    console.log('[endRound] curRole is ' + self.curRole);
     self.addLog(self.roleSet.roleList[self.curRole].name + '结束了行动回合。');
     self.nextRoleAction(null, self);
 };
@@ -760,7 +775,7 @@ game.defaultRolePick = function () {
             break;
         }
     }
-    console.log("当前要选角色：" + pickedRoleId);
+    console.log("当前系统要自动选的角色：" + pickedRoleId);
     self.pickRole({
         roleId: pickedRoleId,
         seatId: self.curPlayer
@@ -794,19 +809,23 @@ game.defaultAction = function () {
 game.playerDisconnect = function (uid) {
     this.playerDict[uid].disconnect = true;
     this.addLog(this.playerDict[uid].wxNickName + ' 掉线了。');
-    /**
-     * 若果在行动回合
-     *
-     * 如果在选人回合
-     *
-     */
+    //若当前玩家是当前行动玩家/当前选人玩家
+    if (this.playerDict[uid].seatId === this.curPlayer) {
 
-    if (this.curState === consts.GAME_STATE.ROLE_PICKING) {
-        console.log("当前自动选角色中");
-        this.defaultRolePick();
-    } else if (this.curState === consts.GAME_STATE.ACTION) {
-        console.log("当前自动行动中..");
-        this.defaultAction();
+
+        /**
+         * 如果在行动回合
+         *
+         * 如果在选人回合
+         *
+         */
+        if (this.curState === consts.GAME_STATE.ROLE_PICKING) {
+            console.log("当前自动选角色中");
+            this.defaultRolePick();
+        } else if (this.curState === consts.GAME_STATE.ACTION) {
+            console.log("当前自动行动中..");
+            this.defaultAction();
+        }
     }
     this.notifySituation();
 };

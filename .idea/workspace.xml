@@ -3,11 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6b20a03c-1453-4521-a035-3fb9f45e0d19" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/consts/consts.js" afterPath="$PROJECT_DIR$/game-server/app/consts/consts.js" />
       <change beforePath="$PROJECT_DIR$/game-server/app/entity/game.js" afterPath="$PROJECT_DIR$/game-server/app/entity/game.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/entity/player.js" afterPath="$PROJECT_DIR$/game-server/app/entity/player.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/entity/room.js" afterPath="$PROJECT_DIR$/game-server/app/entity/room.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/services/roomService.js" afterPath="$PROJECT_DIR$/game-server/app/services/roomService.js" />
     </list>
     <ignored path="citadels-server.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -31,8 +27,8 @@
           <file leaf-file-name="room.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/game-server/app/entity/room.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="221">
-                  <caret line="108" column="33" lean-forward="false" selection-start-line="108" selection-start-column="33" selection-end-line="108" selection-end-column="33" />
+                <state relative-caret-position="-1666">
+                  <caret line="28" column="8" lean-forward="false" selection-start-line="28" selection-start-column="8" selection-end-line="28" selection-end-column="8" />
                   <folding />
                 </state>
               </provider>
@@ -51,21 +47,18 @@
           <file leaf-file-name="game.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="442">
-                  <caret line="215" column="22" lean-forward="false" selection-start-line="215" selection-start-column="22" selection-end-line="215" selection-end-column="22" />
+                <state relative-caret-position="417">
+                  <caret line="232" column="12" lean-forward="false" selection-start-line="232" selection-start-column="12" selection-end-line="232" selection-end-column="12" />
                   <folding>
-                    <element signature="e#10239#10375#0" expanded="false" />
-                    <element signature="e#10697#11383#0" expanded="false" />
-                    <element signature="e#11655#13682#0" expanded="false" />
-                    <element signature="e#13866#14222#0" expanded="false" />
-                    <element signature="e#14373#16691#0" expanded="false" />
-                    <element signature="e#17387#18201#0" expanded="false" />
-                    <element signature="e#18281#18613#0" expanded="false" />
-                    <element signature="e#18831#19657#0" expanded="false" />
-                    <element signature="e#19848#20134#0" expanded="false" />
-                    <element signature="e#20241#20532#0" expanded="false" />
-                    <element signature="e#20642#21001#0" expanded="false" />
-                    <element signature="e#21035#21548#0" expanded="false" />
+                    <element signature="e#10864#11000#0" expanded="false" />
+                    <element signature="e#12362#14389#0" expanded="false" />
+                    <element signature="e#14573#14929#0" expanded="false" />
+                    <element signature="e#15080#17398#0" expanded="false" />
+                    <element signature="e#18094#18908#0" expanded="false" />
+                    <element signature="e#19538#20364#0" expanded="false" />
+                    <element signature="e#20555#20841#0" expanded="false" />
+                    <element signature="e#20948#21239#0" expanded="false" />
+                    <element signature="e#21742#22255#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -84,8 +77,8 @@
           <file leaf-file-name="coreHandler.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="2380">
-                  <caret line="140" column="30" lean-forward="false" selection-start-line="140" selection-start-column="30" selection-end-line="140" selection-end-column="30" />
+                <state relative-caret-position="256">
+                  <caret line="78" column="23" lean-forward="false" selection-start-line="78" selection-start-column="23" selection-end-line="78" selection-end-column="23" />
                   <folding />
                 </state>
               </provider>
@@ -94,7 +87,7 @@
           <file leaf-file-name="roomService.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/game-server/app/services/roomService.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="205">
+                <state relative-caret-position="-509">
                   <caret line="58" column="13" lean-forward="false" selection-start-line="58" selection-start-column="13" selection-end-line="58" selection-end-column="13" />
                   <folding />
                 </state>
@@ -152,7 +145,7 @@
               <file leaf-file-name="player.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/game-server/app/entity/player.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="194">
+                    <state relative-caret-position="653">
                       <caret line="54" column="15" lean-forward="false" selection-start-line="54" selection-start-column="15" selection-end-line="54" selection-end-column="15" />
                       <folding />
                     </state>
@@ -178,8 +171,8 @@
               <file leaf-file-name="game.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="-11783">
-                      <caret line="185" column="25" lean-forward="false" selection-start-line="185" selection-start-column="25" selection-end-line="185" selection-end-column="25" />
+                    <state relative-caret-position="-12342">
+                      <caret line="54" column="38" lean-forward="false" selection-start-line="54" selection-start-column="38" selection-end-line="54" selection-end-column="38" />
                       <folding />
                     </state>
                   </provider>
@@ -362,6 +355,15 @@
               <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="servers" type="462c0819:PsiDirectoryNode" />
               <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="handler" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="citadels-server" type="b2602c69:ProjectViewProjectNode" />
+              <item name="citadels-server" type="462c0819:PsiDirectoryNode" />
+              <item name="game-server" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="servers" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
               <item name="remote" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -471,7 +473,7 @@
       <workItem from="1521529390817" duration="5350000" />
       <workItem from="1521556776175" duration="31375000" />
       <workItem from="1521731850158" duration="25531000" />
-      <workItem from="1522047659179" duration="11854000" />
+      <workItem from="1522047659179" duration="18722000" />
     </task>
     <task id="LOCAL-00001" summary="1. 多人进入房间可用，但可能还有bug；&#10;2. 离开房间或断开连接，将从room中删除player，但可能还有bug；&#10;3. 玩家准备和取消准备，还未测试，可能有bug。">
       <created>1519571699091</created>
@@ -585,11 +587,18 @@
       <option name="project" value="LOCAL" />
       <updated>1521888108842</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="v0.1.0.10  完善了断线重连的处理。">
+      <created>1522137906363</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1522137906363</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="205699000" />
+    <option name="totallyTimeSpent" value="212567000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1015" extended-state="6" />
@@ -648,7 +657,8 @@
     <MESSAGE value="v0.0.17 1.铁匠铺、实验室主动技能完成。2.【BUGFIX】军阀之前仍然可以拆除已经造满了的玩家的建筑。" />
     <MESSAGE value="v0.0.17.3  bugfix,见有道云笔记 开发日记 2018-3-23" />
     <MESSAGE value="v0.0.19 1.增加了日志显示；2.增加了断线后手动重进房间的逻辑。" />
-    <option name="LAST_COMMIT_MESSAGE" value="v0.0.19 1.增加了日志显示；2.增加了断线后手动重进房间的逻辑。" />
+    <MESSAGE value="v0.1.0.10  完善了断线重连的处理。" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.1.0.10  完善了断线重连的处理。" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -940,14 +950,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2380">
-          <caret line="140" column="30" lean-forward="false" selection-start-line="140" selection-start-column="30" selection-end-line="140" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/entity/pile.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="137">
@@ -980,34 +982,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/servers/connector/handler/entryHandler.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="613">
-          <caret line="111" column="31" lean-forward="false" selection-start-line="111" selection-start-column="31" selection-end-line="111" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/servers/core/remote/coreRemote.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="613">
           <caret line="81" column="29" lean-forward="false" selection-start-line="81" selection-start-column="29" selection-end-line="81" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/services/roomService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="58" column="13" lean-forward="false" selection-start-line="58" selection-start-column="13" selection-end-line="58" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/entity/room.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="108" column="33" lean-forward="false" selection-start-line="108" selection-start-column="33" selection-end-line="108" selection-end-column="33" />
           <folding />
         </state>
       </provider>
@@ -1024,29 +1002,58 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/entity/player.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
+        <state relative-caret-position="653">
           <caret line="54" column="15" lean-forward="false" selection-start-line="54" selection-start-column="15" selection-end-line="54" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/servers/connector/handler/entryHandler.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="613">
+          <caret line="111" column="31" lean-forward="false" selection-start-line="111" selection-start-column="31" selection-end-line="111" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="78" column="23" lean-forward="false" selection-start-line="78" selection-start-column="23" selection-end-line="78" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/services/roomService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-509">
+          <caret line="58" column="13" lean-forward="false" selection-start-line="58" selection-start-column="13" selection-end-line="58" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/entity/room.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1666">
+          <caret line="28" column="8" lean-forward="false" selection-start-line="28" selection-start-column="8" selection-end-line="28" selection-end-column="8" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="215" column="22" lean-forward="false" selection-start-line="215" selection-start-column="22" selection-end-line="215" selection-end-column="22" />
+        <state relative-caret-position="417">
+          <caret line="232" column="12" lean-forward="false" selection-start-line="232" selection-start-column="12" selection-end-line="232" selection-end-column="12" />
           <folding>
-            <element signature="e#10239#10375#0" expanded="false" />
-            <element signature="e#10697#11383#0" expanded="false" />
-            <element signature="e#11655#13682#0" expanded="false" />
-            <element signature="e#13866#14222#0" expanded="false" />
-            <element signature="e#14373#16691#0" expanded="false" />
-            <element signature="e#17387#18201#0" expanded="false" />
-            <element signature="e#18281#18613#0" expanded="false" />
-            <element signature="e#18831#19657#0" expanded="false" />
-            <element signature="e#19848#20134#0" expanded="false" />
-            <element signature="e#20241#20532#0" expanded="false" />
-            <element signature="e#20642#21001#0" expanded="false" />
-            <element signature="e#21035#21548#0" expanded="false" />
+            <element signature="e#10864#11000#0" expanded="false" />
+            <element signature="e#12362#14389#0" expanded="false" />
+            <element signature="e#14573#14929#0" expanded="false" />
+            <element signature="e#15080#17398#0" expanded="false" />
+            <element signature="e#18094#18908#0" expanded="false" />
+            <element signature="e#19538#20364#0" expanded="false" />
+            <element signature="e#20555#20841#0" expanded="false" />
+            <element signature="e#20948#21239#0" expanded="false" />
+            <element signature="e#21742#22255#0" expanded="false" />
           </folding>
         </state>
       </provider>
