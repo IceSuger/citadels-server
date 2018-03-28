@@ -56,6 +56,9 @@ roomService.enterRoom = function(msg) {
     // console.log('After entering===');
     // console.log(this.roomDict);
     var code;
+    var retmsg = {
+        code: code
+    };
     if(!room){
         code = consts.ENTER_ROOM.ERROR_ROOM_NOT_EXIST;
     } else if (msg.passwd !== room.passwd) {
@@ -65,11 +68,8 @@ roomService.enterRoom = function(msg) {
     } else {
         code = room.playerEnter(msg);
         // code = consts.ENTER_ROOM.OK;
+        retmsg.roomMemberMax = room.totalPlayer;
     }
-    var retmsg = {
-        code: code,
-        roomMemberMax: room.totalPlayer
-    };
     return retmsg;
 };
 
