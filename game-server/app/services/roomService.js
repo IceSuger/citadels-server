@@ -57,7 +57,6 @@ roomService.enterRoom = function(msg) {
     // console.log(this.roomDict);
     var code;
     var retmsg = {
-        code: code
     };
     if(!room){
         code = consts.ENTER_ROOM.ERROR_ROOM_NOT_EXIST;
@@ -70,6 +69,7 @@ roomService.enterRoom = function(msg) {
         // code = consts.ENTER_ROOM.OK;
         retmsg.roomMemberMax = room.totalPlayer;
     }
+    retmsg.code = code;
     return retmsg;
 };
 

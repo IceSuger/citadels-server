@@ -73,7 +73,7 @@ room.playerEnter = function (msg) {
             status = consts.ENTER_ROOM.ERROR_ROOM_FULL;
         }
     } else {
-        console.log("游戏不存在或已结束。");
+        console.log("房间内游戏不存在或已结束。");
         this.playerDict[msg.uid] = new Player(msg);
         this.playerCnt = Object.keys(this.playerDict).length;
         if (!!this.channel) {
