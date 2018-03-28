@@ -106,7 +106,9 @@ room.playerEnter = function (msg) {
 room.playerLeave = function (uid, sid) {
     if (!!this.game && !this.game.gameOver) {
         //游戏正在进行中
-        this.game.playerDisconnect(uid);
+        if (this.game.playerDisconnect(uid) <= 0) {
+            return 0;
+        }
 
     } else {
 

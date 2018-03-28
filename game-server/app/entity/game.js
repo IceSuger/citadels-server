@@ -516,6 +516,7 @@ game.useAbility = function(msg){
         //刺客：目标角色被标记为killed
         targetRole.killed = true;
         self.addLog('刺客刺杀了 ' + targetRole.name + '。');
+        self.notifyRoleKilled(msg.targetRoleId);
         // self.kill()
     } else if (sourcePlayer.role === consts.ROLES.THIEF) {
         //盗贼：目标角色 stolenBy 被赋值
@@ -799,6 +800,17 @@ game.defaultAction = function () {
     self.endRound();
 };
 
+game.countActivePlayers = function () {
+    var cnt = 0;
+    var self = this;
+    this.seatMap.forEach(function (uid) {
+        if (!self.playerDict[uid].disconnect) {
+            cnt++;
+        }
+    });
+    return cnt;
+};
+
 /**
  * 游戏进行中，有玩家掉线
  * 如果此时正是该玩家的行动回合或选人回合，则：
@@ -808,6 +820,14 @@ game.defaultAction = function () {
  */
 game.playerDisconnect = function (uid) {
     this.playerDict[uid].disconnect = true;
+    /**
+     * 统计本局游戏当前还有几个玩家在线。并返回剩余人数。外部判断如果值小于等于0，则删除房间。
+     */
+    var activePlayerCnt = this.countActivePlayers();
+    if (activePlayerCnt <= 0) {
+        return 0;
+    }
+
     this.addLog(this.playerDict[uid].wxNickName + ' 掉线了。');
     //若当前玩家是当前行动玩家/当前选人玩家
     if (this.playerDict[uid].seatId === this.curPlayer) {
@@ -828,6 +848,7 @@ game.playerDisconnect = function (uid) {
         }
     }
     this.notifySituation();
+    return activePlayerCnt;
 };
 
 /**
@@ -934,6 +955,19 @@ game.notifyCemeteryDone = function () {
 game.notifyGameOver = function () {
     var self = this;
     self.channel.pushMessage('onGameOver', {});
+};
+
+game.notifyRoleKilled = function (roleIdKilled) {
+    // var roleIdKilled;
+    // this.roleSet.roleList.forEach(function(roleObj){
+    //     if(roleObj.killed){
+    //         roleIdKilled = roleObj.id;
+    //     }
+    // });
+    var msg = {
+        roleIdKilled: roleIdKilled
+    };
+    this.channel.pushMessage('onRoleKilled', msg);
 };
 
 game.addLog = function (text) {
