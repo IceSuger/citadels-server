@@ -160,7 +160,7 @@ game.startRolePicking = function (_, self) {
     //用2人测试一下。
     self.roleSet.banAndShowMany(roleSetSize - 1 - (self.totalPlayer + 1) - 1);
 
-    if (self.crownSeatId) {
+    if (self.crownSeatId >= 0) {
         //如果指定了皇冠
         self.curPlayer = self.crownSeatId;
     }
