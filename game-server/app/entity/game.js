@@ -375,6 +375,7 @@ game.pickRole = function(msg){
     var uid = this.seatMap[msg.seatId];
     var player = this.playerDict[uid];
     player.pickRole(msg);
+    this.addLog(msg.seatId + '号玩家 ' + player.wxNickName + '已经选完角色。');
     //该玩家选角色，则将其已拿金币/建筑牌的行动标记置false
     player.coinOrCardsTaken = false;
     this.cntOfPlayerPickedRole++;
@@ -524,7 +525,7 @@ game.useAbility = function(msg){
         self.addLog('盗贼偷了 ' + targetRole.name + ' 的金币。');
     } else if (sourcePlayer.role === consts.ROLES.MAGICIAN) {
         //魔术师：
-        if (msg.targetSeatId) {
+        if (msg.targetSeatId >= 0) {
             //  目标为玩家，则交换 sourcePlayer 和 targetPlayer 的手牌
             var tmp = [];
             sourcePlayer.handCards.forEach(function (value) {
