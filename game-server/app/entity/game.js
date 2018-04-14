@@ -17,7 +17,9 @@ var Game = function(room) {
     // channel 这俩对象用来向客户端发消息
     this.channelService = room.channelService;
     this.channel = room.channel;
-    this.playerDict = room.playerDict;
+    this.playerInfoDict = room.playerInfoDict;
+    // this.playerDict = room.playerDict;
+
     //seatMap 保存 seat 到 uid 的映射
     this.seatMap = Object.keys(self.playerDict);
     this.seatMap.forEach(function (uid, seatId, _) {

@@ -11,7 +11,7 @@ var Room = function(msg){
     this.passwd = msg.passwd;
     this.totalPlayer = msg.totalPlayer;
     this.playerCnt = 0;
-    this.playerDict = {};  //保存整个 player 对象
+    this.playerInfoDict = {};  //保存整个 player 对象
     this.readyPlayers = []; //仅保存 uid
 
     this.channelService = pomelo.app.get('channelService');
@@ -32,7 +32,7 @@ Array.prototype.removeByValue = function(val) {
 
 room.notifyRoomMemberChange = function () {
     var msg = {
-        playerDict: this.playerDict
+        playerInfoDict: this.playerInfoDict
     };
     this.channel.pushMessage('roomMemberChange', msg);
 };
@@ -59,7 +59,7 @@ room.playerEnter = function (msg) {
     if (!!this.game && !this.game.gameOver) {
         console.log("游戏还在进行中，玩家回来啦");
         //游戏正在进行中
-        if (this.game.playerDict.hasOwnProperty(msg.uid)) {
+        if (this.game.playerInfoDict.hasOwnProperty(msg.uid)) {
             //若该玩家属于本局游戏
             if (!!this.channel) {
                 this.channel.add(msg.uid, msg.serverId);
@@ -74,8 +74,8 @@ room.playerEnter = function (msg) {
         }
     } else {
         console.log("房间内游戏不存在或已结束。");
-        this.playerDict[msg.uid] = new Player(msg);
-        this.playerCnt = Object.keys(this.playerDict).length;
+        this.playerInfoDict[msg.uid] = new Player(msg);
+        this.playerCnt = Object.keys(this.playerInfoDict).length;
         if (!!this.channel) {
             this.channel.add(msg.uid, msg.serverId);
         }
@@ -108,12 +108,14 @@ room.playerLeave = function (uid, sid) {
         //游戏正在进行中
         if (this.game.playerDisconnect(uid) <= 0) {
             return 0;
+        } else {
+            return 1;
         }
 
     } else {
 
 
-        delete this.playerDict[uid];
+        delete this.playerInfoDict[uid];
 
         this.readyPlayers.removeByValue(uid);
 
@@ -126,7 +128,7 @@ room.playerLeave = function (uid, sid) {
     if (!!channel) {
         channel.leave(uid, sid);
     }
-    this.playerCnt = Object.keys(this.playerDict).length;
+    this.playerCnt = Object.keys(this.playerInfoDict).length;
     return this.playerCnt;
 };
 
