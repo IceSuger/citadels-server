@@ -12,6 +12,8 @@ var RoomService = function() {
     this.curMaxRoomId = 0;
     this.roomDict = {};
 
+    this.timer = null;
+
     //self.reset();
 };
 
@@ -66,7 +68,9 @@ roomService.enterRoom = function(msg) {
         //     code = consts.ENTER_ROOM.ERROR_ROOM_FULL;
     } else {
         code = room.playerEnter(msg);
-        // code = consts.ENTER_ROOM.OK;
+        if (code === consts.ENTER_ROOM.OK) {
+            clearTimeout(this.timer);
+        }
         retmsg.roomMemberMax = room.totalPlayer;
     }
     retmsg.code = code;
@@ -81,6 +85,7 @@ roomService.enterRoom = function(msg) {
  */
 roomService.leaveRoom = function (uid, sid, roomId) {
     // console.log(typeof roomId);
+    var self = this;
     var room = this.roomDict[roomId];
     if (!room) {
         return;
@@ -88,8 +93,14 @@ roomService.leaveRoom = function (uid, sid, roomId) {
     var playerCnt = room.playerLeave(uid, sid);
     if (playerCnt === 0) {
         //如果全部玩家都退出了，就干掉这个room
-        delete this.roomDict[roomId];
-        console.log('ROOM DELETED: ' + roomId);
+        //先等待十分钟，再删除room
+        this.timer = setTimeout(function () {
+            //delete room
+            delete self.roomDict[roomId];
+            console.log('ROOM DELETED: ' + roomId);
+        }, 10 * 60 * 1000);
+
+
     }
 };
 
