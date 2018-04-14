@@ -1,1 +1,27 @@
-{}
+[
+  "core.coreHandler.ready",
+  "core.coreHandler.pickRole",
+  "core.coreHandler.cancelReady",
+  "core.coreHandler.takeCoinsOrBuildingCards",
+  "core.coreHandler.pickBuildingCard",
+  "core.coreHandler.build",
+  "core.coreHandler.useAbility",
+  "core.coreHandler.smithy",
+  "core.coreHandler.laboratory",
+  "core.coreHandler.collectTaxes",
+  "core.coreHandler.recycle",
+  "core.coreHandler.endRound",
+  "roomMemberChange",
+  "roomReadyChange",
+  "onPickingRole",
+  "onTakingAction",
+  "onSituationUpdate",
+  "onMove",
+  "onGameStateChange",
+  "onGameOver",
+  "onCemetery",
+  "onCemeteryDone",
+  "onRoleKilled",
+  "onLog",
+  "onReconnect"
+]
