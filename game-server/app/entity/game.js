@@ -8,6 +8,7 @@ var Pile = require('./pile');
 var Bank = require('./bank');
 var buildings = require('../consts/buildings');
 var moment = require('moment');
+var Player = require('./player');
 
 var Game = function(room) {
     var self = this;
@@ -66,6 +67,7 @@ var Game = function(room) {
     this.bank = new Bank();
     this.historyMsg = null;
 
+
     console.log("Before Game.init ");
     this.init();
     console.log("After Game.init ");
@@ -111,8 +113,13 @@ game.init = function(){
     });
     console.log(this.pile.pile.length);
 
-
-    this.notifySituation();
+    var seats2Update = [];
+    self.playerVarArray.forEach(function (_, seatId) {
+        if (seatId >= 0) {
+            seats2Update.push(seatId);
+        }
+    });
+    this.notifySituation(seats2Update);
 
 
     // console.log("皇冠交给："+this.crownSeatId);
@@ -344,7 +351,14 @@ game.gameEnd = function (_, self) {
 
         playerObj.score = score;
     });
-    self.notifySituation();
+
+    var seats2Update = [];
+    self.playerVarArray.forEach(function (_, seatId) {
+        if (seatId >= 0) {
+            seats2Update.push(seatId);
+        }
+    });
+    self.notifySituation(seats2Update);
     self.notifyGameOver();
     self.addLog('游戏结束。');
 };
@@ -428,6 +442,8 @@ game.takeCoinsOrBuildingCards = function(msg){
     // var player = this.playerDict[msg.uid];
     var playerInfoObj = this.playerInfoDict[msg.uid];
     var player = this.playerVarArray[seatId];
+    var seats2Update = [];
+
     //若是商人，先多给1金币
     if (player.role === consts.ROLES.MERCHANT) {
         self.takeCoins(consts.CAN_TAKE_COIN_COUNT.MERCHANT, seatId);
@@ -444,7 +460,8 @@ game.takeCoinsOrBuildingCards = function(msg){
     player.coinOrCardsTaken = true;
     if (msg.move === consts.MOVE.TAKE_COINS) {
         self.takeCoins(consts.CAN_TAKE_COIN_COUNT.NORMAL, seatId);
-        self.notifySituation();
+        seats2Update.push(seatId);
+        self.notifySituation(seats2Update);
         self.addLog(self.roleSet.roleList[player.role].name + '（' + playerInfoObj.wxNickName + '）拿取2金币。');
     } else {
         //通知场上，当前玩家选择拿建筑
@@ -499,7 +516,9 @@ game.pickBuildingCard = function(msg){
     msg.notPickedList.forEach(function(value, index, array){
         self.pile.append(value)
     });
-    self.notifySituation();
+    var seats2Update = [];
+    seats2Update.push(seatId);
+    self.notifySituation(seats2Update);
     self.addLog('选择了' + msg.pickedList.length + '张加入手牌。');
 };
 
@@ -526,6 +545,8 @@ game.useAbility = function(msg){
     var sourcePlayer = self.playerVarArray[seatId];
     // var playerInfoObj = this.playerInfoDict[uid];
     // var playerVarObj = this.playerVarDict[uid];
+    var seats2Update = [];
+    seats2Update.push(seatId);
 
     var targetPlayer = null;
     var targetRole = null;
@@ -535,6 +556,7 @@ game.useAbility = function(msg){
     } else if (msg.targetSeatId) {
         targetPlayer = self.playerVarArray[msg.targetSeatId];
         targetPlayerInfo = self.playerInfoDict[self.seatMap[msg.targetSeatId]];
+        seats2Update.push(msg.targetSeatId);
     }
 
     if (sourcePlayer.role === consts.ROLES.ASSASSIN) {
@@ -581,7 +603,7 @@ game.useAbility = function(msg){
         self.demolish(msg);
     }
 
-    this.notifySituation();
+    this.notifySituation(seats2Update);
 };
 
 /**
@@ -664,11 +686,16 @@ game.abilityEffectBeforeAction = function () {
     var self = this;
     var curPlayerObj = self.playerVarArray[self.curPlayer];
     var curRoleObj = self.roleSet.roleList[self.curRole];
+    var seats2Update = [];
     if (curRoleObj.stolenBy !== null) {
         self.playerVarArray[self.playerInfoDict[curRoleObj.stolenBy].seatId].coins += curPlayerObj.coins;
         curPlayerObj.coins = 0;
+
+        seats2Update.push(self.curPlayer);
+        seats2Update.push(self.playerInfoDict[curRoleObj.stolenBy].seatId);
     }
-    self.notifySituation();
+
+    self.notifySituation(seats2Update);
 };
 
 /**
@@ -711,7 +738,9 @@ game.build = function(msg){
         self.gameOver = true;
     }
     //4.
-    this.notifySituation();
+    var seats2Update = [];
+    seats2Update.push(seatId);
+    this.notifySituation(seats2Update);
 };
 
 /**
@@ -730,7 +759,9 @@ game.collectTaxes = function (msg) {
     var myColor = this.roleSet.roleList[playerObj.role].color;
     var tax = playerObj.collectTaxes(myColor);
     self.addLog('玩家 ' + playerInfoObj.wxNickName + ' 收取了建筑带来的税收共' + tax + '金币。');
-    this.notifySituation();
+    var seats2Update = [];
+    seats2Update.push(seatId);
+    this.notifySituation(seats2Update);
 };
 
 /**
@@ -749,7 +780,9 @@ game.smithy = function (msg) {
     for (var i = 0; i < 3; i++) {
         playerObj.handCards.push(self.pile.draw());
     }
-    this.notifySituation();
+    var seats2Update = [];
+    seats2Update.push(seatId);
+    this.notifySituation(seats2Update);
     this.addLog('玩家 ' + playerInfoObj.wxNickName + ' 使用铁匠铺的特技，支付2金币摸取了3张手牌。');
 };
 
@@ -774,7 +807,9 @@ game.laboratory = function (msg) {
 
     playerObj.coins++;
 
-    this.notifySituation();
+    var seats2Update = [];
+    seats2Update.push(seatId);
+    this.notifySituation(seats2Update);
     this.addLog('玩家 ' + playerInfoObj.wxNickName + ' 使用实验室的特技，丢弃1张手牌，获得了1金币。');
 };
 
@@ -796,7 +831,9 @@ game.recycle = function (msg) {
     }
 
     this.notifyCemeteryDone();
-    this.notifySituation();
+    var seats2Update = [];
+    seats2Update.push(seatId);
+    this.notifySituation(seats2Update);
 };
 
 /**
@@ -903,7 +940,9 @@ game.playerDisconnect = function (uid) {
             this.defaultAction();
         }
     }
-    this.notifySituation();
+    var seats2Update = [];
+    seats2Update.push(seatId);
+    this.notifySituation(seats2Update);
     return activePlayerCnt;
 };
 
@@ -917,7 +956,11 @@ game.playerReconnect = function (uid, sid) {
     var self = this;
     var seatId = this.playerInfoDict[uid];
     this.playerVarArray[seatId].disconnect = false;
-    this.notifySituation();
+
+    var seats2Update = [];
+    seats2Update.push(seatId);
+    this.notifySituation(seats2Update);
+
     this.addLog(this.playerInfoDict[uid].wxNickName + ' 重连了。');
     this.channelService.pushMessageByUids('onReconnect', {
         // 单点推送 playerInfoDict 和 playerVarArray
@@ -988,6 +1031,9 @@ game.notifyTakingAction = function () {
  * param： 一个list，保存所有需要被更新的玩家对应的 seatId，据此从 playerVarArray 中选出要更新的玩家数据，发给客户端
  */
 game.notifySituation = function (seatIdListToUpdate) {
+    if (seatIdListToUpdate.length === 0) {
+        return;
+    }
     var self = this;
     var playerVars2Update = [];
     seatIdListToUpdate.forEach(function (seatId) {

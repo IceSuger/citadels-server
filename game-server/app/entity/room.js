@@ -2,7 +2,7 @@
  * Created by X93 on 2018/2/13.
  */
 var Game = require('./game');
-var Player = require('./player');
+var PlayerInfo = require('./playerInfo');
 var pomelo = require('pomelo');
 var consts = require('../consts/consts');
 
