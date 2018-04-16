@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6b20a03c-1453-4521-a035-3fb9f45e0d19" name="Default" comment="">
+    <list default="true" id="6b20a03c-1453-4521-a035-3fb9f45e0d19" name="Default" comment="v0.2.0 改进：1.对网络传输数据内容进行了优化，减少了带宽占用。">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/game-server/app/entity/game.js" afterPath="$PROJECT_DIR$/game-server/app/entity/game.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/entity/room.js" afterPath="$PROJECT_DIR$/game-server/app/entity/room.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/services/roomService.js" afterPath="$PROJECT_DIR$/game-server/app/services/roomService.js" />
     </list>
     <ignored path="citadels-server.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,26 +27,21 @@
           <file leaf-file-name="room.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/game-server/app/entity/room.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="307">
-                  <caret line="111" column="21" lean-forward="true" selection-start-line="111" selection-start-column="21" selection-end-line="111" selection-end-column="21" />
+                <state relative-caret-position="1156">
+                  <caret line="77" column="65" lean-forward="true" selection-start-line="77" selection-start-column="65" selection-end-line="77" selection-end-column="65" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="game.js" pinned="false" current-in-tab="false">
+          <file leaf-file-name="game.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="120">
-                  <caret line="823" column="18" lean-forward="false" selection-start-line="823" selection-start-column="18" selection-end-line="823" selection-end-column="18" />
+                <state relative-caret-position="548">
+                  <caret line="996" column="22" lean-forward="false" selection-start-line="996" selection-start-column="8" selection-end-line="996" selection-end-column="22" />
                   <folding>
-                    <element signature="e#10937#11073#0" expanded="false" />
-                    <element signature="e#12505#14532#0" expanded="false" />
-                    <element signature="e#14716#15072#0" expanded="false" />
-                    <element signature="e#18291#19105#0" expanded="false" />
-                    <element signature="e#20758#21044#0" expanded="false" />
-                    <element signature="e#21151#21442#0" expanded="false" />
-                    <element signature="e#21945#22458#0" expanded="false" />
+                    <element signature="e#19455#20864#0" expanded="false" />
+                    <element signature="e#23170#23576#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -74,21 +67,21 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="master.json" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/game-server/config/master.json">
+          <file leaf-file-name="coreHandler.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="0">
-                  <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+                <state relative-caret-position="433">
+                  <caret line="78" column="23" lean-forward="false" selection-start-line="78" selection-start-column="23" selection-end-line="78" selection-end-column="23" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="roomService.js" pinned="false" current-in-tab="true">
+          <file leaf-file-name="roomService.js" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/game-server/app/services/roomService.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="410">
-                  <caret line="70" column="37" lean-forward="true" selection-start-line="70" selection-start-column="37" selection-end-line="70" selection-end-column="37" />
+                <state relative-caret-position="565">
+                  <caret line="69" column="12" lean-forward="true" selection-start-line="69" selection-start-column="12" selection-end-line="69" selection-end-column="12" />
                   <folding />
                 </state>
               </provider>
@@ -165,8 +158,18 @@
               <file leaf-file-name="player.js" pinned="false" current-in-tab="true">
                 <entry file="file://$PROJECT_DIR$/game-server/app/entity/player.js">
                   <provider selected="true" editor-type-id="text-editor">
-                    <state relative-caret-position="345">
-                      <caret line="54" column="15" lean-forward="false" selection-start-line="54" selection-start-column="15" selection-end-line="54" selection-end-column="15" />
+                    <state relative-caret-position="187">
+                      <caret line="56" column="16" lean-forward="false" selection-start-line="56" selection-start-column="16" selection-end-line="56" selection-end-column="16" />
+                      <folding />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file leaf-file-name="playerInfo.js" pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/game-server/app/entity/playerInfo.js">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="170">
+                      <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
                       <folding />
                     </state>
                   </provider>
@@ -192,15 +195,15 @@
                 <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
                   <provider selected="true" editor-type-id="text-editor">
                     <state relative-caret-position="238">
-                      <caret line="797" column="37" lean-forward="false" selection-start-line="797" selection-start-column="37" selection-end-line="797" selection-end-column="37" />
+                      <caret line="844" column="37" lean-forward="false" selection-start-line="844" selection-start-column="37" selection-end-line="844" selection-end-column="37" />
                       <folding>
-                        <element signature="e#10937#11073#0" expanded="false" />
-                        <element signature="e#12505#14532#0" expanded="false" />
-                        <element signature="e#14716#15072#0" expanded="false" />
-                        <element signature="e#18291#19105#0" expanded="false" />
-                        <element signature="e#20758#21044#0" expanded="false" />
-                        <element signature="e#21151#21442#0" expanded="false" />
-                        <element signature="e#21945#22458#0" expanded="false" />
+                        <element signature="e#11442#11585#0" expanded="false" />
+                        <element signature="e#13103#15299#0" expanded="false" />
+                        <element signature="e#15483#16000#0" expanded="false" />
+                        <element signature="e#19455#20864#0" expanded="false" />
+                        <element signature="e#22662#23063#0" expanded="false" />
+                        <element signature="e#23170#23576#0" expanded="false" />
+                        <element signature="e#24194#24824#0" expanded="false" />
                       </folding>
                     </state>
                   </provider>
@@ -221,10 +224,15 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>playerDict</find>
       <find>playerDisc</find>
+      <find>seatMap</find>
+      <find>takeCoins</find>
+      <find>playerDict</find>
+      <find>playerVarDict</find>
+      <find>Player</find>
     </findStrings>
     <replaceStrings>
+      <replace>playerVarArray</replace>
       <replace>playerInfoDict</replace>
     </replaceStrings>
   </component>
@@ -250,11 +258,12 @@
         <option value="$PROJECT_DIR$/game-server/app/entity/role.js" />
         <option value="$PROJECT_DIR$/game-server/app/consts/buildings.js" />
         <option value="$PROJECT_DIR$/game-server/app/consts/consts.js" />
-        <option value="$PROJECT_DIR$/game-server/app/entity/player.js" />
         <option value="$PROJECT_DIR$/game-server/config/dictionary.json" />
-        <option value="$PROJECT_DIR$/game-server/app/entity/game.js" />
-        <option value="$PROJECT_DIR$/game-server/app/entity/room.js" />
         <option value="$PROJECT_DIR$/game-server/app/services/roomService.js" />
+        <option value="$PROJECT_DIR$/game-server/app/entity/playerInfo.js" />
+        <option value="$PROJECT_DIR$/game-server/app/entity/player.js" />
+        <option value="$PROJECT_DIR$/game-server/app/entity/room.js" />
+        <option value="$PROJECT_DIR$/game-server/app/entity/game.js" />
       </list>
     </option>
   </component>
@@ -347,52 +356,6 @@
               <item name="game-server" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="entity" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="citadels-server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="citadels-server" type="462c0819:PsiDirectoryNode" />
-              <item name="game-server" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="servers" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="citadels-server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="citadels-server" type="462c0819:PsiDirectoryNode" />
-              <item name="game-server" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="servers" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="citadels-server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="citadels-server" type="462c0819:PsiDirectoryNode" />
-              <item name="game-server" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="servers" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="handler" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="citadels-server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="citadels-server" type="462c0819:PsiDirectoryNode" />
-              <item name="game-server" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="servers" type="462c0819:PsiDirectoryNode" />
-              <item name="core" type="462c0819:PsiDirectoryNode" />
-              <item name="remote" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="citadels-server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="citadels-server" type="462c0819:PsiDirectoryNode" />
-              <item name="game-server" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="services" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="citadels-server" type="b2602c69:ProjectViewProjectNode" />
-              <item name="citadels-server" type="462c0819:PsiDirectoryNode" />
-              <item name="game-server" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -489,7 +452,7 @@
       <workItem from="1522047659179" duration="30617000" />
       <workItem from="1522504350633" duration="2174000" />
       <workItem from="1522514461227" duration="749000" />
-      <workItem from="1523690179734" duration="9092000" />
+      <workItem from="1523690179734" duration="16984000" />
     </task>
     <task id="LOCAL-00001" summary="1. 多人进入房间可用，但可能还有bug；&#10;2. 离开房间或断开连接，将从room中删除player，但可能还有bug；&#10;3. 玩家准备和取消准备，还未测试，可能有bug。">
       <created>1519571699091</created>
@@ -673,18 +636,25 @@
       <option name="project" value="LOCAL" />
       <updated>1523698164636</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="v0.1.1.16.4 改进：完善了房间删除的逻辑，之前是整个服务器中只有一个倒计时，现在是对每个房间设置自己的倒计时，且改成3分钟了。">
+      <created>1523722304817</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1523722304817</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="236477000" />
+    <option name="totallyTimeSpent" value="244369000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1015" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1328125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32963374" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32963374" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3263041" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -695,7 +665,6 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32963374" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
@@ -720,8 +689,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="1. 多人进入房间可用，但可能还有bug；&#10;2. 离开房间或断开连接，将从room中删除player，已测试；&#10;3. 玩家准备和取消准备，已测试。" />
-    <MESSAGE value="上个版本，用户断开连接后服务器会尝试执行room.leave()，现在改为先判断room是否存在，存在才执行之。" />
     <MESSAGE value="房间玩家全部准备后，将新建一局游戏。可向房间广播当前可选角色列表。（后期正式版将改为仅将玩家可知信息发送给相应玩家。）" />
     <MESSAGE value="轮流选角色直至结束选角色回合，已可以正常工作。" />
     <MESSAGE value=" v0.0.7.1 【修复bug】上个版本中，进入行动回合时玩家身份可显示，但situationUpdate后，身份将被“未知”覆盖。" />
@@ -745,7 +712,9 @@
     <MESSAGE value="v0.1.1.15 【bugfix】0号玩家当国王时，无法顺利取得皇冠。" />
     <MESSAGE value="v0.1.1.16.2 【bugfix】1.新建房间后一进入就掉线；【改进】1. 服务 器端当房间为空时，会继续维持10分钟，10分钟都没人重连，再删除房间" />
     <MESSAGE value="v0.1.1.16.3 改进：使用pomelo的dict进行了路由路径压缩。" />
-    <option name="LAST_COMMIT_MESSAGE" value="v0.1.1.16.3 改进：使用pomelo的dict进行了路由路径压缩。" />
+    <MESSAGE value="v0.1.1.16.4 改进：完善了房间删除的逻辑，之前是整个服务器中只有一个倒计时，现在是对每个房间设置自己的倒计时，且改成3分钟了。" />
+    <MESSAGE value="v0.2.0 改进：1.对网络传输数据内容进行了优化，减少了带宽占用。" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.2.0 改进：1.对网络传输数据内容进行了优化，减少了带宽占用。" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -755,13 +724,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/game-server/config/adminUser.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/util/dispatcher.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -998,14 +960,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1326">
-          <caret line="78" column="23" lean-forward="false" selection-start-line="78" selection-start-column="23" selection-end-line="78" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/servers/connector/handler/entryHandler.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1887">
@@ -1018,14 +972,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
           <caret line="24" column="34" lean-forward="false" selection-start-line="24" selection-start-column="34" selection-end-line="24" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/entity/player.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="54" column="15" lean-forward="false" selection-start-line="54" selection-start-column="15" selection-end-line="54" selection-end-column="15" />
           <folding />
         </state>
       </provider>
@@ -1120,35 +1066,54 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/entity/playerInfo.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/servers/core/handler/coreHandler.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="433">
+          <caret line="78" column="23" lean-forward="false" selection-start-line="78" selection-start-column="23" selection-end-line="78" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/entity/player.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="56" column="16" lean-forward="false" selection-start-line="56" selection-start-column="16" selection-end-line="56" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/game-server/app/services/roomService.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="565">
+          <caret line="69" column="12" lean-forward="true" selection-start-line="69" selection-start-column="12" selection-end-line="69" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/entity/room.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="111" column="21" lean-forward="true" selection-start-line="111" selection-start-column="21" selection-end-line="111" selection-end-column="21" />
+        <state relative-caret-position="1156">
+          <caret line="77" column="65" lean-forward="true" selection-start-line="77" selection-start-column="65" selection-end-line="77" selection-end-column="65" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="823" column="18" lean-forward="false" selection-start-line="823" selection-start-column="18" selection-end-line="823" selection-end-column="18" />
+        <state relative-caret-position="548">
+          <caret line="996" column="22" lean-forward="false" selection-start-line="996" selection-start-column="8" selection-end-line="996" selection-end-column="22" />
           <folding>
-            <element signature="e#10937#11073#0" expanded="false" />
-            <element signature="e#12505#14532#0" expanded="false" />
-            <element signature="e#14716#15072#0" expanded="false" />
-            <element signature="e#18291#19105#0" expanded="false" />
-            <element signature="e#20758#21044#0" expanded="false" />
-            <element signature="e#21151#21442#0" expanded="false" />
-            <element signature="e#21945#22458#0" expanded="false" />
+            <element signature="e#19455#20864#0" expanded="false" />
+            <element signature="e#23170#23576#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/game-server/app/services/roomService.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="410">
-          <caret line="70" column="37" lean-forward="true" selection-start-line="70" selection-start-column="37" selection-end-line="70" selection-end-column="37" />
-          <folding />
         </state>
       </provider>
     </entry>

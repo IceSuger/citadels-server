@@ -18,12 +18,15 @@ var Game = function(room) {
     this.channelService = room.channelService;
     this.channel = room.channel;
     this.playerInfoDict = room.playerInfoDict;
+    this.playerVarArray = [];
     // this.playerDict = room.playerDict;
 
     //seatMap 保存 seat 到 uid 的映射
-    this.seatMap = Object.keys(self.playerDict);
+    this.seatMap = Object.keys(self.playerInfoDict);
     this.seatMap.forEach(function (uid, seatId, _) {
-        self.playerDict[uid].seatId = seatId;
+        self.playerInfoDict[uid].seatId = seatId;
+        // self.playerVarDict[uid].seatId = seatId;
+        self.playerVarArray[seatId] = new Player(seatId);
         // console.log(uid + ' : seatId is ' + seatId);
     });
     // console.log(Object.keys(self.playerDict));
@@ -96,12 +99,16 @@ game.init = function(){
     this.addLog('皇冠随机初始化为' + this.crownSeatId + '号玩家。');
 
     console.log(this.pile.pile.length);
-    for (var uid in self.playerDict) {
-        if (self.playerDict.hasOwnProperty(uid)) {
-            self.takeCoins(2, uid);
-            self.drawCards(4, uid);
-        }
-    }
+    // for (var uid in self.playerVarDict) {
+    //     if (self.playerVarDict.hasOwnProperty(uid)) {
+    //         self.takeCoins(2, uid);
+    //         self.drawCards(4, uid);
+    //     }
+    // }
+    self.playerVarArray.forEach(function (playerObj, seatId) {
+        self.takeCoins(2, seatId);
+        self.drawCards(4, seatId);
+    });
     console.log(this.pile.pile.length);
 
 
@@ -166,7 +173,7 @@ game.startRolePicking = function (_, self) {
         //如果指定了皇冠
         self.curPlayer = self.crownSeatId;
     }
-    self.addLog('本轮从' + self.curPlayer + '号玩家（' + self.playerDict[self.seatMap[self.curPlayer]].wxNickName + '）开始选角色。');
+    self.addLog('本轮从' + self.curPlayer + '号玩家（' + self.playerInfoDict[self.seatMap[self.curPlayer]].wxNickName + '）开始选角色。');
     self.cntOfPlayerPickedRole = 0;
 
     self.notifyPickingRole();
@@ -224,15 +231,15 @@ game.nextRoleAction = function (_, self) {
             self.crownSeatId = curRoleObj.seatId;
         }
         self.abilityEffectBeforeAction();
-        if (!self.playerDict[self.seatMap[curRoleObj.seatId]].disconnect) {
+        if (!self.playerVarArray[curRoleObj.seatId].disconnect) {
             // console.log('该角色可被操控。');
 
             self.notifyTakingAction();
-            self.addLog(self.curRole + '号角色' + curRoleObj.name + '（' + self.playerDict[self.seatMap[self.curPlayer]].wxNickName + '）开始行动回合！');
+            self.addLog(self.curRole + '号角色' + curRoleObj.name + '（' + self.playerInfoDict[self.seatMap[self.curPlayer]].wxNickName + '）开始行动回合！');
             // console.log('通知客户端们。');
         } else {
             //该角色已经被选，但玩家掉线了，则自动行动
-            self.addLog("由于玩家" + self.playerDict[self.seatMap[self.curPlayer]].wxNickName + "掉线，系统自动执行行动：拿2金币。");
+            self.addLog("由于玩家" + self.playerInfoDict[self.seatMap[self.curPlayer]].wxNickName + "掉线，系统自动执行行动：拿2金币。");
             console.log('curRoleObj.seatId: ' + curRoleObj.seatId);
             console.log('curRole: ' + self.curRole);
             console.log('curPlayer: ' + self.curPlayer);
@@ -268,11 +275,14 @@ game.checkGameOver = function (_, self) {
 
 
          */
-        for (uid in self.playerDict) {
-            if (self.playerDict.hasOwnProperty(uid)) {
-                self.playerDict[uid].role = consts.ROLES.NONE;
-            }
-        }
+        // for (seatId in self.playerVarArray) {
+        //     if (self.playerVarArray.hasOwnProperty(uid)) {
+        //         self.playerVarArray[uid].role = consts.ROLES.NONE;
+        //     }
+        // }
+        self.playerVarArray.forEach(function (playerVar, seatId) {
+            playerVar.role = consts.ROLES.NONE;
+        });
         // setTimeout(function () {
         //     self.fsm.continueGame(self);
         // }, 0);
@@ -300,7 +310,7 @@ game.checkGameOver = function (_, self) {
  */
 game.gameEnd = function (_, self) {
     self.seatMap.forEach(function (uid, seatId) {
-        var playerObj = self.playerDict[uid];
+        var playerObj = self.playerVarArray[seatId];
         var score = 0;
         var colorDict = {};
         for (cardId in playerObj.buildingDict) {
@@ -340,24 +350,24 @@ game.gameEnd = function (_, self) {
 };
 
 /**
- * 玩家 uid 从银行拿走 count 个金币。
+ * 座次为 seatId 的玩家从银行拿走 count 个金币。
  * @param count
- * @param uid
+ * @param seatId
  */
-game.takeCoins = function (count, uid) {
+game.takeCoins = function (count, seatId) {
     this.bank.draw(count);
-    this.playerDict[uid].coins += Number(count);
+    this.playerVarArray[seatId].coins += Number(count);
 };
 
 /**
  * 玩家 uid 从牌堆顶部摸取 count 张建筑牌。
  * @param count
- * @param uid
+ * @param seatId
  */
-game.drawCards = function (count, uid) {
+game.drawCards = function (count, seatId) {
     for (var i = 0; i < count; i++) {
         var cardId = this.pile.draw();
-        this.playerDict[uid].addHandCard(cardId);
+        this.playerVarArray[seatId].addHandCard(cardId);
     }
 };
 
@@ -375,11 +385,12 @@ game.drawCards = function (count, uid) {
 game.pickRole = function(msg){
     this.roleSet.pick(msg.roleId, msg.seatId);
     var uid = this.seatMap[msg.seatId];
-    var player = this.playerDict[uid];
-    player.pickRole(msg);
-    this.addLog(msg.seatId + '号玩家 ' + player.wxNickName + '已经选完角色。');
+    var playerInfoObj = this.playerInfoDict[uid];
+    var playerVarObj = this.playerVarArray[msg.seatId];
+    playerVarObj.pickRole(msg);
+    this.addLog(msg.seatId + '号玩家 ' + playerInfoObj.wxNickName + '已经选完角色。');
     //该玩家选角色，则将其已拿金币/建筑牌的行动标记置false
-    player.coinOrCardsTaken = false;
+    playerVarObj.coinOrCardsTaken = false;
     this.cntOfPlayerPickedRole++;
     // if (this.curPlayer !== this.totalPlayer - 1) {
     if (this.cntOfPlayerPickedRole !== this.totalPlayer) {
@@ -413,10 +424,13 @@ game.pickRole = function(msg){
  */
 game.takeCoinsOrBuildingCards = function(msg){
     var self = this;
-    var player = this.playerDict[msg.uid];
+    var seatId = self.playerInfoDict[msg.uid].seatId;
+    // var player = this.playerDict[msg.uid];
+    var playerInfoObj = this.playerInfoDict[msg.uid];
+    var player = this.playerVarArray[seatId];
     //若是商人，先多给1金币
     if (player.role === consts.ROLES.MERCHANT) {
-        self.takeCoins(consts.CAN_TAKE_COIN_COUNT.MERCHANT, msg.uid);
+        self.takeCoins(consts.CAN_TAKE_COIN_COUNT.MERCHANT, seatId);
         self.addLog('商人被动多获得1金币。');
     }
     //若是建筑师，先多给2张牌
@@ -429,9 +443,9 @@ game.takeCoinsOrBuildingCards = function(msg){
     //标记一下，该玩家已经拿过金币或建筑牌。
     player.coinOrCardsTaken = true;
     if (msg.move === consts.MOVE.TAKE_COINS) {
-        self.takeCoins(consts.CAN_TAKE_COIN_COUNT.NORMAL, msg.uid);
+        self.takeCoins(consts.CAN_TAKE_COIN_COUNT.NORMAL, seatId);
         self.notifySituation();
-        self.addLog(self.roleSet.roleList[player.role].name + '（' + player.wxNickName + '）拿取2金币。');
+        self.addLog(self.roleSet.roleList[player.role].name + '（' + playerInfoObj.wxNickName + '）拿取2金币。');
     } else {
         //通知场上，当前玩家选择拿建筑
         var pushMsg = {
@@ -460,7 +474,7 @@ game.takeCoinsOrBuildingCards = function(msg){
         //     uid: tuid,
         //     sid: tsid
         // }]);
-        self.addLog(self.roleSet.roleList[player.role].name + '（' + player.wxNickName + '）摸了' + count + '张建筑牌。');
+        self.addLog(self.roleSet.roleList[player.role].name + '（' + playerInfoObj.wxNickName + '）摸了' + count + '张建筑牌。');
         return buildingCards4Picking;
     }
 };
@@ -475,7 +489,10 @@ game.takeCoinsOrBuildingCards = function(msg){
  */
 game.pickBuildingCard = function(msg){
     var self = this;
-    var player = this.playerDict[msg.uid];
+    var seatId = this.playerInfoDict[msg.uid].seatId;
+    var player = this.playerVarArray[seatId];
+    // var playerInfoObj = this.playerInfoDict[uid];
+    // var playerVarObj = this.playerVarDict[uid];
     msg.pickedList.forEach(function(value, index, array){
         player.addHandCard(value);
     });
@@ -505,14 +522,19 @@ game.useAbility = function(msg){
     // msg.discardCards;
     // msg.uid;
     var self = this;
-    var sourcePlayer = self.playerDict[msg.uid];
+    var seatId = this.playerInfoDict[msg.uid].seatId;
+    var sourcePlayer = self.playerVarArray[seatId];
+    // var playerInfoObj = this.playerInfoDict[uid];
+    // var playerVarObj = this.playerVarDict[uid];
+
     var targetPlayer = null;
     var targetRole = null;
     if (msg.targetRoleId) {
         // targetPlayer = self.playerDict[self.seatMap[self.roleSet.roleList[msg.targetRoleId].seatId]];
         targetRole = self.roleSet.roleList[msg.targetRoleId];
     } else if (msg.targetSeatId) {
-        targetPlayer = self.playerDict[self.seatMap[msg.targetSeatId]];
+        targetPlayer = self.playerVarArray[msg.targetSeatId];
+        targetPlayerInfo = self.playerInfoDict[self.seatMap[msg.targetSeatId]];
     }
 
     if (sourcePlayer.role === consts.ROLES.ASSASSIN) {
@@ -541,7 +563,7 @@ game.useAbility = function(msg){
             tmp.forEach(function (value) {
                 targetPlayer.handCards.push(value);
             });
-            self.addLog('魔术师与玩家 ' + targetPlayer.wxNickName + ' 交换了全部手牌。');
+            self.addLog('魔术师与玩家 ' + targetPlayerInfo.wxNickName + ' 交换了全部手牌。');
         } else {
             //  目标为系统，则将 discardCards[] 塞到pile底部，从手牌里删掉 discardCards，再给他起等数量张牌
             self.pile.appendMany(msg.discardCards);
@@ -595,8 +617,10 @@ game.useAbility = function(msg){
  */
 game.demolish = function (msg) {
     var self = this;
-    var targetPlayer = self.playerDict[self.seatMap[msg.targetSeatId]];
-    var sourcePlayer = self.playerDict[msg.uid];
+    var targetPlayer = self.playerVarArray[msg.targetSeatId];
+    var targetPlayerInfo = self.playerInfoDict[self.seatMap[msg.targetSeatId]];
+    var seatId = self.playerInfoDict[msg.uid].seatId;
+    var sourcePlayer = self.playerVarArray[seatId];
 
 
     //2.
@@ -606,19 +630,31 @@ game.demolish = function (msg) {
     //4.
     self.bank.coins += msg.demolishCost;
 
-    self.addLog('军阀用' + msg.demolishCost + '金币摧毁了玩家 ' + targetPlayer.wxNickName + ' 的建筑：' + buildings[msg.targetBuilding].name + '。');
+    self.addLog('军阀用' + msg.demolishCost + '金币摧毁了玩家 ' + targetPlayerInfo.wxNickName + ' 的建筑：' + buildings[msg.targetBuilding].name + '。');
 
-    //5.
-    Object.keys(self.playerDict).forEach(function (uid) {
-        if (self.playerDict[uid].buildingDict.hasOwnProperty(consts.BUILDINGS.CEMETERY)) {
+    //5. 注意这里由于找到了就要break，所以不能用foreach！
+    // self.playerVarArray.forEach(function(playerObj, seatId){
+    //     if (playerObj.buildingDict.hasOwnProperty(consts.BUILDINGS.CEMETERY)) {
+    //         //找到了墓地。则广播事件。
+    //         self.notifyCemetery();
+    //     } else {
+    //         //1.
+    //         self.pile.append(msg.targetBuilding);
+    //         self.notifyCemeteryDone();
+    //     }
+    // })
+    for (var i in self.playerVarArray) {
+        if (self.playerVarArray[i].buildingDict.hasOwnProperty(consts.BUILDINGS.CEMETERY)) {
             //找到了墓地。则广播事件。
-            self.notifyCemetery(uid);
-        } else {
-            //1.
+            self.notifyCemetery();
+            break;
+        }
+        if (i === self.playerVarArray.length - 1) {
+            //如果已经遍历完了整个数组，也没找到
             self.pile.append(msg.targetBuilding);
             self.notifyCemeteryDone();
         }
-    })
+    }
 };
 
 /**
@@ -626,10 +662,10 @@ game.demolish = function (msg) {
  */
 game.abilityEffectBeforeAction = function () {
     var self = this;
-    var curPlayerObj = self.playerDict[self.seatMap[self.curPlayer]];
+    var curPlayerObj = self.playerVarArray[self.curPlayer];
     var curRoleObj = self.roleSet.roleList[self.curRole];
     if (curRoleObj.stolenBy !== null) {
-        self.playerDict[curRoleObj.stolenBy].coins += curPlayerObj.coins;
+        self.playerVarArray[self.playerInfoDict[curRoleObj.stolenBy].seatId].coins += curPlayerObj.coins;
         curPlayerObj.coins = 0;
     }
     self.notifySituation();
@@ -652,22 +688,24 @@ game.abilityEffectBeforeAction = function () {
  */
 game.build = function(msg){
     var self = this;
+    var seatId = this.playerInfoDict[msg.uid].seatId;
+    var playerInfoObj = this.playerInfoDict[msg.uid];
     //1. 2.
-    var playerObj = this.playerDict[msg.uid];
+    var playerObj = this.playerVarArray[seatId];
     playerObj.build(msg.cardId);
     var cost = buildings[msg.cardId].cost;
     this.bank.coins += cost;
 
-    self.addLog('玩家 ' + playerObj.wxNickName + ' 建造了 ' + buildings[msg.cardId].name + '。');
+    self.addLog('玩家 ' + playerInfoObj.wxNickName + ' 建造了 ' + buildings[msg.cardId].name + '。');
     //3.
     if (Object.keys(playerObj.buildingDict).length >= self.gameOverBuildingCnt) {
         //如果gameOver==false，说明当前玩家是第一个造满建筑的，赋值firstFullBuilding，否则说明不是第一个，赋值secondFullBuilding
         if (!self.gameOver) {
             playerObj.firstFullBuilding = true;
-            self.addLog('玩家 ' + playerObj.wxNickName + ' 第一个造满了建筑。');
+            self.addLog('玩家 ' + playerInfoObj.wxNickName + ' 第一个造满了建筑。');
         } else {
             playerObj.secondFullBuilding = true;
-            self.addLog('玩家 ' + playerObj.wxNickName + ' 也造满了建筑。');
+            self.addLog('玩家 ' + playerInfoObj.wxNickName + ' 也造满了建筑。');
         }
 
         self.gameOver = true;
@@ -686,10 +724,12 @@ game.build = function(msg){
  */
 game.collectTaxes = function (msg) {
     var self = this;
-    var playerObj = this.playerDict[msg.uid];
+    var seatId = this.playerInfoDict[msg.uid].seatId;
+    var playerObj = this.playerVarArray[seatId];
+    var playerInfoObj = this.playerInfoDict[msg.uid];
     var myColor = this.roleSet.roleList[playerObj.role].color;
     var tax = playerObj.collectTaxes(myColor);
-    self.addLog('玩家 ' + playerObj.wxNickName + ' 收取了建筑带来的税收共' + tax + '金币。');
+    self.addLog('玩家 ' + playerInfoObj.wxNickName + ' 收取了建筑带来的税收共' + tax + '金币。');
     this.notifySituation();
 };
 
@@ -702,13 +742,15 @@ game.collectTaxes = function (msg) {
  */
 game.smithy = function (msg) {
     var self = this;
-    var playerObj = this.playerDict[msg.uid];
+    var seatId = this.playerInfoDict[msg.uid].seatId;
+    var playerObj = this.playerVarArray[seatId];
+    var playerInfoObj = this.playerInfoDict[msg.uid];
     playerObj.coins -= 2;
     for (var i = 0; i < 3; i++) {
         playerObj.handCards.push(self.pile.draw());
     }
     this.notifySituation();
-    this.addLog('玩家 ' + playerObj.wxNickName + ' 使用铁匠铺的特技，支付2金币摸取了3张手牌。');
+    this.addLog('玩家 ' + playerInfoObj.wxNickName + ' 使用铁匠铺的特技，支付2金币摸取了3张手牌。');
 };
 
 /**
@@ -721,7 +763,9 @@ game.smithy = function (msg) {
 game.laboratory = function (msg) {
     var self = this;
     self.pile.append(msg.cardId);
-    var playerObj = self.playerDict[msg.uid];
+    var seatId = this.playerInfoDict[msg.uid].seatId;
+    var playerObj = this.playerVarArray[seatId];
+    var playerInfoObj = this.playerInfoDict[msg.uid];
 
     console.log('丢弃的牌id' + msg.cardId);
     console.log('我的金币' + playerObj.coins);
@@ -731,22 +775,24 @@ game.laboratory = function (msg) {
     playerObj.coins++;
 
     this.notifySituation();
-    this.addLog('玩家 ' + playerObj.wxNickName + ' 使用实验室的特技，丢弃1张手牌，获得了1金币。');
+    this.addLog('玩家 ' + playerInfoObj.wxNickName + ' 使用实验室的特技，丢弃1张手牌，获得了1金币。');
 };
 
 
 game.recycle = function (msg) {
-    var playerObj = self.playerDict[msg.uid];
+    var seatId = this.playerInfoDict[msg.uid].seatId;
+    var playerObj = this.playerVarArray[seatId];
+    var playerInfoObj = this.playerInfoDict[msg.uid];
     if (msg.recycle) {
         //墓地主人选择回收
 
         playerObj.coins--;
         playerObj.addHandCard(msg.cardId);
-        this.addLog('铁匠铺主人 ' + playerObj.wxNickName + ' 花费1金币，回收了建筑牌 ' + buildings[msg.cardId].name + '。');
+        this.addLog('墓地主人 ' + playerInfoObj.wxNickName + ' 花费1金币，回收了建筑牌 ' + buildings[msg.cardId].name + '。');
     } else {
         //不回收，则牌放回牌堆底部
         this.pile.append(msg.cardId);
-        this.addLog('铁匠铺主人 ' + playerObj.wxNickName + ' 拒绝回收建筑牌 ' + buildings[msg.cardId].name + '。');
+        this.addLog('墓地主人 ' + playerInfoObj.wxNickName + ' 拒绝回收建筑牌 ' + buildings[msg.cardId].name + '。');
     }
 
     this.notifyCemeteryDone();
@@ -793,10 +839,11 @@ game.defaultRolePick = function () {
  */
 game.defaultAction = function () {
     var self = this;
-    var playerObj = self.playerDict[self.seatMap[self.curPlayer]];
+    // var playerObj = self.playerDict[self.seatMap[self.curPlayer]];
+    var playerObj = self.playerVarArray[self.curPlayer];
     if (!playerObj.coinOrCardsTaken) {
         self.takeCoinsOrBuildingCards({
-            uid: playerObj.uid,
+            uid: self.seatMap[playerObj.seatId],
             move: consts.MOVE.TAKE_COINS
         })
     }
@@ -806,8 +853,13 @@ game.defaultAction = function () {
 game.countActivePlayers = function () {
     var cnt = 0;
     var self = this;
-    this.seatMap.forEach(function (uid) {
-        if (!self.playerDict[uid].disconnect) {
+    // this.seatMap.forEach(function (uid) {
+    //     if (!self.playerDict[uid].disconnect) {
+    //         cnt++;
+    //     }
+    // });
+    this.playerVarArray.forEach(function (playerObj, seatId) {
+        if (!playerObj.disconnect) {
             cnt++;
         }
     });
@@ -822,7 +874,8 @@ game.countActivePlayers = function () {
  * @param uid
  */
 game.playerDisconnect = function (uid) {
-    this.playerDict[uid].disconnect = true;
+    var seatId = this.playerInfoDict[uid];
+    this.playerVarArray[seatId].disconnect = true;
     /**
      * 统计本局游戏当前还有几个玩家在线。并返回剩余人数。外部判断如果值小于等于0，则删除房间。
      */
@@ -831,9 +884,9 @@ game.playerDisconnect = function (uid) {
         return 0;
     }
 
-    this.addLog(this.playerDict[uid].wxNickName + ' 掉线了。');
+    this.addLog(this.playerInfoDict[uid].wxNickName + ' 掉线了。');
     //若当前玩家是当前行动玩家/当前选人玩家
-    if (this.playerDict[uid].seatId === this.curPlayer) {
+    if (this.playerInfoDict[uid].seatId === this.curPlayer) {
 
 
         /**
@@ -861,12 +914,16 @@ game.playerDisconnect = function (uid) {
  * 单点推送本局游戏历史和游戏局势。
  */
 game.playerReconnect = function (uid, sid) {
-    this.playerDict[uid].disconnect = false;
+    var self = this;
+    var seatId = this.playerInfoDict[uid];
+    this.playerVarArray[seatId].disconnect = false;
     this.notifySituation();
-    this.addLog(this.playerDict[uid].wxNickName + ' 重连了。');
+    this.addLog(this.playerInfoDict[uid].wxNickName + ' 重连了。');
     this.channelService.pushMessageByUids('onReconnect', {
-        // logs: this.historyMsg,
-        playerDict: this.playerDict
+        // 单点推送 playerInfoDict 和 playerVarArray
+        // playerDict: this.playerDict
+        playerInfoDict: self.playerInfoDict,
+        playerVarArray: self.playerVarArray
     }, [{uid: uid, sid: sid}]);
 };
 
@@ -891,7 +948,7 @@ game.notifyPickingRole = function () {
         roleList: self.roleSet.roleList
     };
     //当前玩家是否掉线
-    if (self.playerDict[self.seatMap[self.curPlayer]].disconnect) {
+    if (self.playerVarArray[self.curPlayer].disconnect) {
         self.defaultRolePick();
     } else {
         self.channel.pushMessage('onPickingRole', msg);
@@ -905,7 +962,7 @@ game.notifyPickingRole = function () {
 game.notifyTakingAction = function () {
     var self = this;
     // var curPlayerObj = self.roleSet.roleList[self.curRole];
-    var curPlayerObj = self.playerDict[self.seatMap[self.curPlayer]];
+    var curPlayerObj = self.playerVarArray[self.curPlayer];
     var canTakeCoinCnt = consts.CAN_TAKE_COIN_COUNT.NORMAL;
     var canTakeCardCnt = consts.CAN_TAKE_CARD_COUNT.NORMAL;
     var canHaveCardCnt = consts.CAN_HAVE_CARD_COUNT.NORMAL;
@@ -927,10 +984,17 @@ game.notifyTakingAction = function () {
     self.channel.pushMessage('onTakingAction', msg);
 };
 
-game.notifySituation = function () {
+/**
+ * param： 一个list，保存所有需要被更新的玩家对应的 seatId，据此从 playerVarArray 中选出要更新的玩家数据，发给客户端
+ */
+game.notifySituation = function (seatIdListToUpdate) {
     var self = this;
+    var playerVars2Update = [];
+    seatIdListToUpdate.forEach(function (seatId) {
+        playerVars2Update.push(self.playerVarArray[seatId]);
+    });
     var msg = {
-        playerDict: self.playerDict
+        playerVarArray: playerVars2Update
     };
     self.channel.pushMessage('onSituationUpdate', msg);
 };
