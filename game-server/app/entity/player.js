@@ -15,11 +15,11 @@ Array.prototype.removeByValue = function (val) {
 };
 
 
-var Player = function(data){
-    this.seatId = null;
-    this.wxNickName = data.wxNickName;
-    this.wxAvatar = data.wxAvatar;
-    this.uid = data.uid;
+var Player = function (seatId) {
+    this.seatId = seatId;
+    // this.wxNickName = data.wxNickName;
+    // this.wxAvatar = data.wxAvatar;
+    // this.uid = data.uid;
 
     this.disconnect = false;
 
