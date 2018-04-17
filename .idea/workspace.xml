@@ -3,9 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6b20a03c-1453-4521-a035-3fb9f45e0d19" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/game-server/app.js" afterPath="$PROJECT_DIR$/game-server/app.js" />
       <change beforePath="$PROJECT_DIR$/game-server/app/entity/game.js" afterPath="$PROJECT_DIR$/game-server/app/entity/game.js" />
-      <change beforePath="$PROJECT_DIR$/game-server/app/entity/room.js" afterPath="$PROJECT_DIR$/game-server/app/entity/room.js" />
     </list>
     <ignored path="citadels-server.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -49,11 +47,11 @@
           <file leaf-file-name="game.js" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="338">
-                  <caret line="359" column="9" lean-forward="true" selection-start-line="359" selection-start-column="9" selection-end-line="359" selection-end-column="9" />
+                <state relative-caret-position="151">
+                  <caret line="954" column="44" lean-forward="true" selection-start-line="954" selection-start-column="44" selection-end-line="954" selection-end-column="44" />
                   <folding>
-                    <element signature="e#20099#21508#0" expanded="false" />
-                    <element signature="e#24114#24590#0" expanded="false" />
+                    <element signature="e#20106#21515#0" expanded="false" />
+                    <element signature="e#24121#24597#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -137,10 +135,10 @@
                 <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
                   <provider selected="true" editor-type-id="text-editor">
                     <state relative-caret-position="238">
-                      <caret line="882" column="37" lean-forward="false" selection-start-line="882" selection-start-column="37" selection-end-line="882" selection-end-column="37" />
+                      <caret line="881" column="37" lean-forward="false" selection-start-line="881" selection-start-column="37" selection-end-line="881" selection-end-column="37" />
                       <folding>
-                        <element signature="e#20099#21508#0" expanded="false" />
-                        <element signature="e#24114#24590#0" expanded="false" />
+                        <element signature="e#20106#21515#0" expanded="false" />
+                        <element signature="e#24121#24597#0" expanded="false" />
                       </folding>
                     </state>
                   </provider>
@@ -169,6 +167,7 @@
       <find>Player</find>
       <find>notifySituation</find>
       <find>seatId &gt; 0</find>
+      <find>playerInfoDict[uid]</find>
     </findStrings>
     <replaceStrings>
       <replace>playerVarArray</replace>
@@ -398,7 +397,7 @@
       <workItem from="1522504350633" duration="2174000" />
       <workItem from="1522514461227" duration="749000" />
       <workItem from="1523690179734" duration="17189000" />
-      <workItem from="1523881172972" duration="3620000" />
+      <workItem from="1523881172972" duration="4358000" />
     </task>
     <task id="LOCAL-00001" summary="1. 多人进入房间可用，但可能还有bug；&#10;2. 离开房间或断开连接，将从room中删除player，但可能还有bug；&#10;3. 玩家准备和取消准备，还未测试，可能有bug。">
       <created>1519571699091</created>
@@ -603,17 +602,23 @@
       <option name="project" value="LOCAL" />
       <updated>1523881190620</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="v0.2.1 【bugfix】部分小bug修复了。">
+      <created>1523884835255</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1523884835255</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="248194000" />
+    <option name="totallyTimeSpent" value="248932000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1015" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1328125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1328125" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32963374" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -650,7 +655,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="房间玩家全部准备后，将新建一局游戏。可向房间广播当前可选角色列表。（后期正式版将改为仅将玩家可知信息发送给相应玩家。）" />
     <MESSAGE value="轮流选角色直至结束选角色回合，已可以正常工作。" />
     <MESSAGE value=" v0.0.7.1 【修复bug】上个版本中，进入行动回合时玩家身份可显示，但situationUpdate后，身份将被“未知”覆盖。" />
     <MESSAGE value="v0.0.9 刺客、盗贼可发动技能；服务端已经可以处理刺客、盗贼、魔术师、军阀的主动技能及建造建筑的逻辑。" />
@@ -675,7 +679,8 @@
     <MESSAGE value="v0.1.1.16.3 改进：使用pomelo的dict进行了路由路径压缩。" />
     <MESSAGE value="v0.1.1.16.4 改进：完善了房间删除的逻辑，之前是整个服务器中只有一个倒计时，现在是对每个房间设置自己的倒计时，且改成3分钟了。" />
     <MESSAGE value="v0.2.0 改进：1.对网络传输数据内容进行了优化，减少了带宽占用。" />
-    <option name="LAST_COMMIT_MESSAGE" value="v0.2.0 改进：1.对网络传输数据内容进行了优化，减少了带宽占用。" />
+    <MESSAGE value="v0.2.1 【bugfix】部分小bug修复了。" />
+    <option name="LAST_COMMIT_MESSAGE" value="v0.2.1 【bugfix】部分小bug修复了。" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1064,11 +1069,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/game-server/app/entity/game.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="338">
-          <caret line="359" column="9" lean-forward="true" selection-start-line="359" selection-start-column="9" selection-end-line="359" selection-end-column="9" />
+        <state relative-caret-position="151">
+          <caret line="954" column="44" lean-forward="true" selection-start-line="954" selection-start-column="44" selection-end-line="954" selection-end-column="44" />
           <folding>
-            <element signature="e#20099#21508#0" expanded="false" />
-            <element signature="e#24114#24590#0" expanded="false" />
+            <element signature="e#20106#21515#0" expanded="false" />
+            <element signature="e#24121#24597#0" expanded="false" />
           </folding>
         </state>
       </provider>

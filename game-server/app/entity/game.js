@@ -911,7 +911,7 @@ game.countActivePlayers = function () {
  * @param uid
  */
 game.playerDisconnect = function (uid) {
-    var seatId = this.playerInfoDict[uid];
+    var seatId = this.playerInfoDict[uid].seatId;
     this.playerVarArray[seatId].disconnect = true;
     /**
      * 统计本局游戏当前还有几个玩家在线。并返回剩余人数。外部判断如果值小于等于0，则删除房间。
@@ -954,7 +954,7 @@ game.playerDisconnect = function (uid) {
  */
 game.playerReconnect = function (uid, sid) {
     var self = this;
-    var seatId = this.playerInfoDict[uid];
+    var seatId = this.playerInfoDict[uid].seatId;
     this.playerVarArray[seatId].disconnect = false;
 
     var seats2Update = [];
